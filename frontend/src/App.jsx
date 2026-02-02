@@ -11,6 +11,7 @@ import MyEvents from './components/MyEvents.jsx'
 import AddEvent from './components/AddEvent.jsx'
 import FindEvents from './components/FindEvents.jsx'
 import Profile from './components/Profile.jsx'
+import ChangePassword from './components/ChangePassword.jsx'
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/addevent" element={<AddEvent />} />
         <Route path="/findevents" element={<FindEvents />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/changepassword" element={<ChangePassword />} />
       </Routes>
     </Router>
   )
