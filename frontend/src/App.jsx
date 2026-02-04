@@ -12,6 +12,11 @@ import AddEvent from './components/AddEvent.jsx'
 import FindEvents from './components/FindEvents.jsx'
 import Profile from './components/Profile.jsx'
 import ChangePassword from './components/ChangePassword.jsx'
+import StaffDashboard from './components/StaffDashboard.jsx'
+import Navbar from './components/Navbar.jsx'
+import ManageEvents from './components/ManageEvents.jsx'
+import ManageUsers from './components/ManageUsers.jsx'
+import Insights from './components/Insights.jsx'
 
 const App = () => {
   return (
@@ -29,6 +34,11 @@ const App = () => {
         <Route path="/findevents" element={<FindEvents />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/changepassword" element={<ChangePassword />} />
+        <Route path="/staff-dashboard" element={<StaffDashboard />} />
+        <Route path="/insights" element={<Insights />} />
+        <Route path="/manage-events" element={<ManageEvents />} />
+        <Route path="/manage-users" element={<ManageUsers />} />
+
       </Routes>
     </Router>
   )

@@ -2,10 +2,25 @@
 
 
 
+print("🔥 LOADING myapp.views from:", __file__)     # this line is for testing purposes only
+
+# -------------------------------------------------------------
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import RegisterSerializer, LoginSerializer
+# ------------------------------------------------------------------------
+from rest_framework.permissions import AllowAny # imports for create event view
+from .models import Event
+from .serializers import EventSerializer
+# ------------------------------------------------------------------------
+
+
+from django.shortcuts import get_object_or_404                # imports for manage events views
+from .models import User
+
+# ------------------------------------------------------------------------
 
 class RegisterView(APIView):
     def post(self, request):
@@ -40,3 +55,177 @@ class LoginView(APIView):
             }, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# ------------------------------------------------------------------------
+
+
+# VIEW TO CREATE EVENT REQUEST
+
+
+class CreateEventView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = EventSerializer(data=request.data)
+
+        if serializer.is_valid():
+            user_id = request.data.get("created_by")
+
+            if not user_id:
+                return Response(
+                    {"error": "User not provided"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            serializer.save(created_by_id=user_id)
+
+            return Response(
+                {"message": "Event request submitted"},
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+# -----------------------------------------------------------------------------------
+
+    # VIEWS FOR STAFF DASHBOARD WILL GO HERE
+
+
+#(event management 👇)
+# 🔹 FETCH ALL EVENTS (for staff)
+class ListEventsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        events = Event.objects.all().order_by('-created_at')
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# 🔹 APPROVE EVENT
+class ApproveEventView(APIView):
+    permission_classes = [AllowAny]
+
+    def patch(self, request, event_id):
+        event = get_object_or_404(Event, id=event_id)
+        staff_id = request.data.get("staff_id")
+
+        if not staff_id:
+            return Response(
+                {"error": "Staff ID required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        event.approval_status = "approved"
+        event.approved_by_id = staff_id
+        event.save()
+
+        return Response(
+            {"message": "Event approved"},
+            status=status.HTTP_200_OK
+        )
+
+
+# 🔹 REJECT EVENT
+class RejectEventView(APIView):
+    permission_classes = [AllowAny]
+
+    def patch(self, request, event_id):
+        event = get_object_or_404(Event, id=event_id)
+        staff_id = request.data.get("staff_id")
+
+        if not staff_id:
+            return Response(
+                {"error": "Staff ID required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        event.approval_status = "rejected"
+        event.approved_by_id = staff_id
+        event.save()
+
+        return Response(
+            {"message": "Event rejected"},
+            status=status.HTTP_200_OK
+        )
+
+
+
+# 🔹 RESET EVENT TO PENDING
+class ResetEventStatusView(APIView):
+    permission_classes = [AllowAny]
+
+    def patch(self, request, event_id):
+        event = get_object_or_404(Event, id=event_id)
+
+        event.approval_status = "pending"
+        event.approved_by = None  # clear staff if you want
+        event.save()
+
+        return Response(
+            {"message": "Event reset to pending"},
+            status=status.HTTP_200_OK
+        )
+
+
+
+
+# 🔹 DELETE EVENT
+class DeleteEventView(APIView):
+    permission_classes = [AllowAny]
+
+    def delete(self, request, event_id):
+        event = get_object_or_404(Event, id=event_id)
+        event.delete()
+
+        return Response(
+            {"message": "Event deleted"},
+            status=status.HTTP_200_OK
+        )
+    
+
+
+    
+
+# -----------------------------------------------------------------------------------
+
+
+#user management 👇
+
+# 🔹 FETCH ALL STUDENTS
+class ListUsersView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        students = User.objects.filter(role="student")
+        data = [
+            {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "department": user.department,
+            }
+            for user in students
+        ]
+        return Response(data, status=status.HTTP_200_OK)
+
+
+# 🔹 DELETE STUDENT
+class DeleteUserView(APIView):
+    permission_classes = [AllowAny]
+
+    def delete(self, request, user_id):
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+
+        return Response(
+            {"message": "User deleted"},
+            status=status.HTTP_200_OK
+        )
+# -----------------------------------------------------------------------------------
+
+
+

@@ -14,6 +14,7 @@ import {
   Stack,
 } from '@mui/material';
 import { Event, Groups, HistoryEdu } from '@mui/icons-material';
+import Navbar from './Navbar.jsx';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -34,9 +35,11 @@ const Home = () => {
   if (!user) return null;
 
   return (
+    <>
+    <Navbar /> 
     <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
 
-      {/* Navigation Bar */}
+      {/* Navigation Bar
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography
@@ -87,7 +90,7 @@ const Home = () => {
             </Button>
           </Stack>
         </Toolbar>
-      </AppBar>
+      </AppBar> */}
 
       {/* Hero Section */}
       <Box
@@ -252,6 +255,7 @@ const Home = () => {
         </Container>
       </Box>
     </Box>
+    </>
   );
 };
 

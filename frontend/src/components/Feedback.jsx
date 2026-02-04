@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
 import {
   AppBar,
   Toolbar,
@@ -30,28 +31,8 @@ const Feedback = () => {
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
 
-
-      {/* Navigation Bar */}
-      <AppBar position="sticky" color="default" elevation={1}>
-              <Toolbar sx={{ justifyContent: 'space-between' }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                  CampusEvents
-                </Typography>
-                <Stack direction="row" spacing={2}>
-                  <Button color="inherit" onClick={() => navigate('/home')}>Home</Button>
-                  <Button color="inherit" onClick={() => navigate('/addevent')}>Organize Events</Button>
-                  <Button color="inherit" onClick={() => navigate('/findevents')}>Find Events</Button>
-                  <Button color="inherit" onClick={() => navigate('/myevents')}>My Events</Button>
-                  <Button color="inherit" onClick={() => navigate('/feedback')}>Feedback</Button>
-                    <Button color="inherit" onClick={()=>navigate('/aboutus')}>About Us</Button>
-                </Stack>
-                <Stack direction="row" spacing={1}>
-                  <Button variant="contained" color="primary" onClick={() => navigate('/login')}>Login</Button>
-                  <Button variant="contained" color="primary" onClick={() => navigate('/signup')}>Sign Up</Button>
-                </Stack>
-              </Toolbar>
-            </AppBar>
-
+      <Navbar />
+      
       {/* Header Section */}
       <Box
         sx={{

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+// frontend/src/components/AddEvent.jsx
+
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  AppBar,
-  Toolbar,
   Typography,
   Button,
   Container,
@@ -12,58 +12,104 @@ import {
   Card,
   CardContent,
   MenuItem,
+  Paper,
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, CloudUpload } from '@mui/icons-material';
+import Navbar from './Navbar';
 
 const AddEvent = () => {
   const navigate = useNavigate();
 
+  // 🔐 logged-in user check (UNCHANGED)
+  const [user, setUser] = useState(null);
+
   const [formData, setFormData] = useState({
     title: '',
     category: '',
-    date: '',
+    start_date: '',
+    end_date: '',
+    start_time: '',
+    end_time: '',
     venue: '',
     description: '',
+    poster_image: null,
   });
+
+  const [imagePreview, setImagePreview] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+
+    if (!storedUser) {
+      navigate('/login');
+    } else {
+      setUser(JSON.parse(storedUser));
+    }
+  }, [navigate]);
+
+  if (!user) return null;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    // later → send request to backend (pending approval)
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData({ ...formData, poster_image: file });
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target?.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
+
+  const handleRemoveImage = () => {
+    setFormData({ ...formData, poster_image: null });
+    setImagePreview(null);
+  };
+
+  // ✅ FINAL POST LOGIC (ONLY NEW PART)
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const payload = new FormData();
+
+  Object.entries(formData).forEach(([key, value]) => {
+    if (value) payload.append(key, value);
+  });
+
+  payload.append('created_by', user.id); // 🔥 THIS FIXES IT
+
+  try {
+    const response = await fetch(
+      'http://localhost:8000/api/events/create/',
+      {
+        method: 'POST',
+        body: payload,
+      }
+    );
+
+    const text = await response.text(); // 👈 DEBUG SAFE
+
+    if (response.ok) {
+      alert('Event request submitted successfully! ✅');
+      navigate('/my-events');
+    } else {
+      console.error(text);
+      alert('Failed to submit event request');
+    }
+  } catch (error) {
+    console.error(error);
+    alert('Something went wrong');
+  }
+};
+
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-
-
-
-
-      {/* Navigation Bar */}
-     <AppBar position="sticky" color="default" elevation={1}>
-             <Toolbar sx={{ justifyContent: 'space-between' }}>
-               <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-                 CampusEvents
-               </Typography>
-               <Stack direction="row" spacing={2}>
-                 <Button color="inherit" onClick={() => navigate('/home')}>Home</Button>
-                 <Button color="inherit" onClick={() => navigate('/addevent')}>Organize Events</Button>
-                 <Button color="inherit" onClick={() => navigate('/findevents')}>Find Events</Button>
-                 <Button color="inherit" onClick={() => navigate('/myevents')}>My Events</Button>
-                 <Button color="inherit" onClick={() => navigate('/feedback')}>Feedback</Button>
-                   <Button color="inherit" onClick={()=>navigate('/aboutus')}>About Us</Button>
-               </Stack>
-               <Stack direction="row" spacing={1}>
-                 <Button variant="contained" color="primary" onClick={() => navigate('/login')}>Login</Button>
-                 <Button variant="contained" color="primary" onClick={() => navigate('/signup')}>Sign Up</Button>
-               </Stack>
-             </Toolbar>
-           </AppBar>
-
-      
+      <Navbar />
 
       {/* Hero Section */}
       <Box
@@ -84,12 +130,12 @@ const AddEvent = () => {
         </Container>
       </Box>
 
-      {/* Event Request Form */}
+      {/* Form */}
       <Container maxWidth="sm" sx={{ py: 8 }}>
         <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
           <CardContent>
             <Stack spacing={3}>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h5" fontWeight="bold">
                 Event Details
               </Typography>
 
@@ -109,26 +155,58 @@ const AddEvent = () => {
                 value={formData.category}
                 onChange={handleChange}
               >
+                <MenuItem value="Stayback">Stayback</MenuItem>
                 <MenuItem value="Stall">Stall</MenuItem>
                 <MenuItem value="Games">Games</MenuItem>
                 <MenuItem value="Tech Talk">Tech Talk</MenuItem>
                 <MenuItem value="Workshop">Workshop</MenuItem>
                 <MenuItem value="Club Event">Club Event</MenuItem>
-
                 <MenuItem value="Cultural">Cultural</MenuItem>
                 <MenuItem value="Sports">Sports</MenuItem>
                 <MenuItem value="Other">Other</MenuItem>
               </TextField>
 
-              <TextField
-                type="date"
-                label="Event Date"
-                name="date"
-                InputLabelProps={{ shrink: true }}
-                fullWidth
-                value={formData.date}
-                onChange={handleChange}
-              />
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <TextField
+                  type="date"
+                  label="Start Date"
+                  name="start_date"
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  value={formData.start_date}
+                  onChange={handleChange}
+                />
+                <TextField
+                  type="date"
+                  label="End Date"
+                  name="end_date"
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  value={formData.end_date}
+                  onChange={handleChange}
+                />
+              </Stack>
+
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <TextField
+                  type="time"
+                  label="Start Time"
+                  name="start_time"
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  value={formData.start_time}
+                  onChange={handleChange}
+                />
+                <TextField
+                  type="time"
+                  label="End Time"
+                  name="end_time"
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                  value={formData.end_time}
+                  onChange={handleChange}
+                />
+              </Stack>
 
               <TextField
                 label="Venue"
@@ -146,8 +224,48 @@ const AddEvent = () => {
                 fullWidth
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Brief description, objectives, and requirements"
               />
+
+              <Box>
+                <Typography fontWeight="bold" mb={1}>
+                  Event Poster (Optional)
+                </Typography>
+                <Paper
+                  variant="outlined"
+                  component="label"
+                  sx={{
+                    p: 2,
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    border: '2px dashed #ccc',
+                    borderRadius: 2,
+                  }}
+                >
+                  <input hidden type="file" accept="image/*" onChange={handleImageChange} />
+                  <CloudUpload sx={{ fontSize: 40, color: 'primary.main' }} />
+                  <Typography variant="body2">
+                    Click to upload image
+                  </Typography>
+                </Paper>
+
+                {imagePreview && (
+                  <Box mt={2}>
+                    <Box
+                      component="img"
+                      src={imagePreview}
+                      sx={{ maxWidth: '100%', maxHeight: 200, borderRadius: 2 }}
+                    />
+                    <Button
+                      size="small"
+                      color="error"
+                      variant="outlined"
+                      onClick={handleRemoveImage}
+                    >
+                      Remove Image
+                    </Button>
+                  </Box>
+                )}
+              </Box>
 
               <Stack direction="row" spacing={2}>
                 <Button
@@ -169,18 +287,6 @@ const AddEvent = () => {
           </CardContent>
         </Card>
       </Container>
-
-      {/* Footer */}
-      <Box sx={{ bgcolor: '#222', color: 'grey.500', py: 6, mt: 8 }}>
-        <Container align="center">
-          <Typography variant="body1">
-            © 2026 CampusEvents Management Portal
-          </Typography>
-          <Typography variant="body2">
-            Designed for students, by students.
-          </Typography>
-        </Container>
-      </Box>
     </Box>
   );
 };

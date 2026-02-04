@@ -52,7 +52,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
     
     
-    
+    # SERIALIZER FOR LOGIN
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
@@ -73,3 +73,24 @@ class LoginSerializer(serializers.Serializer):
 
         data["user"] = user
         return data
+
+
+# SERIALIZER FOR EVENT MODEL
+from .models import Event
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = [
+            'id',                 # 🔥 REQUIRED for staff actions
+            'title',
+            'category',
+            'start_date',
+            'end_date',
+            'start_time',
+            'end_time',
+            'venue',
+            'description',
+            'poster_image',
+            'approval_status',
+        ]
