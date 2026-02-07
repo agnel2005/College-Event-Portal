@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
@@ -17,31 +17,31 @@ import {
 
 const AboutUs = () => {
 
-   //--------------------------------------- user aware
-    const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    //---------------------------------------------------
-    // ---------------------------------------------------- user aware
-        useEffect(() => {
-          const storedUser = localStorage.getItem('user');
-      
-          if (!storedUser) {
-            navigate('/login');
-          } else {
-            setUser(JSON.parse(storedUser));
-          }
-        }, [navigate]);
-      
-        // Prevent render until user is loaded
-        if (!user) return null;
-    // -------------------------------------------------------------------------
+  //--------------------------------------- user aware
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  //---------------------------------------------------
+  // ---------------------------------------------------- user aware
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+
+    if (!storedUser) {
+      navigate('/login');
+    } else {
+      setUser(JSON.parse(storedUser));
+    }
+  }, [navigate]);
+
+  // Prevent render until user is loaded
+  if (!user) return null;
+  // -------------------------------------------------------------------------
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
 
 
-        <Navbar />
-      
+      <Navbar />
+
 
 
       {/* Hero Section */}

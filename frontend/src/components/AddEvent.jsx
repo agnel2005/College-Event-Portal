@@ -71,44 +71,44 @@ const AddEvent = () => {
   };
 
   // ✅ FINAL POST LOGIC (ONLY NEW PART)
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const payload = new FormData();
+    const payload = new FormData();
 
-  Object.entries(formData).forEach(([key, value]) => {
-    if (value) payload.append(key, value);
-  });
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) payload.append(key, value);
+    });
 
-  payload.append('created_by', user.id); // 🔥 THIS FIXES IT
+    payload.append('created_by', user.id); // 🔥 THIS FIXES IT
 
-  try {
-    const response = await fetch(
-      'http://localhost:8000/api/events/create/',
-      {
-        method: 'POST',
-        body: payload,
+    try {
+      const response = await fetch(
+        'http://localhost:8000/api/events/create/',
+        {
+          method: 'POST',
+          body: payload,
+        }
+      );
+
+      const text = await response.text(); // 👈 DEBUG SAFE
+
+      if (response.ok) {
+        alert('Event request submitted successfully! ✅');
+        navigate('/myevents');
+      } else {
+        console.error(text);
+        alert('Failed to submit event request');
       }
-    );
-
-    const text = await response.text(); // 👈 DEBUG SAFE
-
-    if (response.ok) {
-      alert('Event request submitted successfully! ✅');
-      navigate('/my-events');
-    } else {
-      console.error(text);
-      alert('Failed to submit event request');
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong');
     }
-  } catch (error) {
-    console.error(error);
-    alert('Something went wrong');
-  }
-};
+  };
 
 
   return (
-    <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
+    <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
 
       {/* Hero Section */}
@@ -131,9 +131,10 @@ const AddEvent = () => {
       </Box>
 
       {/* Form */}
-      <Container maxWidth="sm" sx={{ py: 8 }}>
+      <Container maxWidth="sm" sx={{ py: 8, flexGrow: 1 }}>
         <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
           <CardContent>
+            {/* ... form content ... */}
             <Stack spacing={3}>
               <Typography variant="h5" fontWeight="bold">
                 Event Details
@@ -146,6 +147,9 @@ const AddEvent = () => {
                 value={formData.title}
                 onChange={handleChange}
               />
+              {/* ... truncated for brevity, we can just replace the wrapper and append footer ... */}
+              {/* simpler approach: just replace the surrounding tags if possible, or just the bottom part if the top part is too large */}
+
 
               <TextField
                 select
@@ -287,6 +291,17 @@ const AddEvent = () => {
           </CardContent>
         </Card>
       </Container>
+      {/* Footer */}
+      <Box sx={{ bgcolor: '#222', color: 'grey.500', py: 6, mt: 8 }}>
+        <Container align="center">
+          <Typography variant="body1">
+            © 2026 CampusEvents Management Portal
+          </Typography>
+          <Typography variant="body2">
+            Designed for students, by students.
+          </Typography>
+        </Container>
+      </Box>
     </Box>
   );
 };

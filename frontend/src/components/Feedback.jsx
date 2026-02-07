@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+// ... rest of imports
 import {
   AppBar,
   Toolbar,
@@ -18,9 +19,24 @@ import { ArrowBack } from '@mui/icons-material';
 
 const Feedback = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState('');
+
+  // 🔐 Protect route - similar to other pages
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) {
+      navigate('/login');
+    } else {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        navigate('/login');
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,11 +44,14 @@ const Feedback = () => {
     // later → send to backend
   };
 
+  // Prevent render until user is loaded
+  if (!user) return null;
+
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
 
       <Navbar />
-      
+
       {/* Header Section */}
       <Box
         sx={{

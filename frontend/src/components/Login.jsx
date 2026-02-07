@@ -14,14 +14,23 @@ import {
   TextField,
   Card,
   CardContent,
+  IconButton,
+  InputAdornment,
 } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login = () => {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -60,7 +69,7 @@ const Login = () => {
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-      
+
       {/* Navigation Bar */}
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar>
@@ -92,7 +101,7 @@ const Login = () => {
         }}
       >
         <Container maxWidth="sm">
-          
+
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <Typography variant="h3" gutterBottom sx={{ fontWeight: 800 }}>
               Welcome Back
@@ -105,7 +114,7 @@ const Login = () => {
 
           <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
             <CardContent sx={{ p: 4 }}>
-              
+
               <Box
                 component="form"
                 onSubmit={handleLogin}
@@ -117,7 +126,7 @@ const Login = () => {
               >
                 <TextField
                   fullWidth
-                  label="Register Number / Username"
+                  label="Register Number"
                   variant="outlined"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -127,11 +136,25 @@ const Login = () => {
                 <TextField
                   fullWidth
                   label="Password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   variant="outlined"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
 
                 <Button

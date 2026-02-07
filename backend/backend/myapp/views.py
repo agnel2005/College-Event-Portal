@@ -113,6 +113,18 @@ class ApproveEventView(APIView):
         event = get_object_or_404(Event, id=event_id)
         staff_id = request.data.get("staff_id")
 
+        staff = get_object_or_404(User, id=staff_id)
+
+        # same department check
+        if staff.department != event.created_by.department:
+            return Response(
+                {"error": "You are not authorized to approve events from another department"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
+
+
         if not staff_id:
             return Response(
                 {"error": "Staff ID required"},
@@ -136,6 +148,19 @@ class RejectEventView(APIView):
     def patch(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
         staff_id = request.data.get("staff_id")
+
+
+        staff = get_object_or_404(User, id=staff_id)
+
+        # same department check
+        if staff.department != event.created_by.department:
+            return Response(
+                {"error": "You are not authorized to reject events from another department"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
+
 
         if not staff_id:
             return Response(
@@ -161,6 +186,18 @@ class ResetEventStatusView(APIView):
     def patch(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
 
+        # same department check
+        staff_id = request.data.get("staff_id")
+        staff = get_object_or_404(User, id=staff_id)
+
+        if staff.department != event.created_by.department:
+            return Response(
+                {"error": "You are not authorized to modify events from another department"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
+
         event.approval_status = "pending"
         event.approved_by = None  # clear staff if you want
         event.save()
@@ -179,12 +216,24 @@ class DeleteEventView(APIView):
 
     def delete(self, request, event_id):
         event = get_object_or_404(Event, id=event_id)
+
+        staff_id = request.data.get("staff_id")
+        staff = get_object_or_404(User, id=staff_id)
+
+        # department check
+        if staff.department != event.created_by.department:
+            return Response(
+                {"error": "You are not authorized to delete events from another department"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         event.delete()
 
         return Response(
             {"message": "Event deleted"},
             status=status.HTTP_200_OK
         )
+
     
 
 
@@ -214,17 +263,49 @@ class ListUsersView(APIView):
 
 
 # 🔹 DELETE STUDENT
+# 🔹 DELETE STUDENT (DEPARTMENT RESTRICTED)
 class DeleteUserView(APIView):
     permission_classes = [AllowAny]
 
     def delete(self, request, user_id):
-        user = get_object_or_404(User, id=user_id)
-        user.delete()
+        staff_id = request.data.get("staff_id")
+
+        if not staff_id:
+            return Response(
+                {"error": "Staff ID required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        staff = get_object_or_404(User, id=staff_id)
+        student = get_object_or_404(User, id=user_id)
+
+        # role checks
+        if staff.role != "staff":
+            return Response(
+                {"error": "Only staff can delete students"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if student.role != "student":
+            return Response(
+                {"error": "Only student accounts can be deleted"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # department check
+        if staff.department != student.department:
+            return Response(
+                {"error": "You can only delete students from your department"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        student.delete()
 
         return Response(
-            {"message": "User deleted"},
+            {"message": "Student deleted successfully"},
             status=status.HTTP_200_OK
         )
+
 # -----------------------------------------------------------------------------------
 
 

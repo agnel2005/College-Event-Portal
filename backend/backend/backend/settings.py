@@ -1,3 +1,9 @@
+# settings.py
+
+
+
+
+
 """
 Django settings for backend project.
 
@@ -131,3 +137,12 @@ STATIC_URL = 'static/'
 # added for custom user model
 AUTH_USER_MODEL = 'myapp.User'
 
+# MEDIA FILES (for event posters)
+from pathlib import Path
+
+# Media files (user uploaded files)
+MEDIA_URL = '/media/'
+# Files were found in d:\django_main\backend\backend\backend\media
+# BASE_DIR is d:\django_main\backend\backend
+# So we need to point to BASE_DIR / 'backend' / 'media'
+MEDIA_ROOT = BASE_DIR / 'backend' / 'media'

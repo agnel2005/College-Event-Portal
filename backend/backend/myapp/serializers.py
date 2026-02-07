@@ -9,13 +9,12 @@ from django.contrib.auth import authenticate
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
-    
+
     staff_code = serializers.CharField(
         write_only=True,
         required=False,
         allow_blank=True
     )
-
 
     class Meta:
         model = User
@@ -48,8 +47,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('confirm_password', None)
-        validated_data.pop('staff_code', None)
-        return User.objects.create_user(**validated_data)
+
+        password = validated_data.pop('password')
+        staff_code = validated_data.pop('staff_code', None)
+
+        user = User(**validated_data)
+        user.set_password(password)
+
+        if staff_code:
+            user.staff_code = staff_code
+        
+        user.save()
+        return user
+
     
     
     # SERIALIZER FOR LOGIN
@@ -78,11 +88,41 @@ class LoginSerializer(serializers.Serializer):
 # SERIALIZER FOR EVENT MODEL
 from .models import Event
 
+# to show student name in event list
+
+class EventRequesterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'username',
+            'department',
+        ]
+
+
+
+
+class EventApproverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'first_name',
+            'last_name',
+            'department',
+        ]
+
+
+
+
 class EventSerializer(serializers.ModelSerializer):
+    created_by = EventRequesterSerializer(read_only=True)
+    approved_by = EventApproverSerializer(read_only=True)
+
     class Meta:
         model = Event
         fields = [
-            'id',                 # 🔥 REQUIRED for staff actions
+            'id',
             'title',
             'category',
             'start_date',
@@ -93,4 +133,7 @@ class EventSerializer(serializers.ModelSerializer):
             'description',
             'poster_image',
             'approval_status',
+            'created_by',
+            'approved_by',
         ]
+

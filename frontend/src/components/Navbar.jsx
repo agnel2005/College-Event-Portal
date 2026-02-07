@@ -15,8 +15,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-const navigate = useNavigate();
-const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   // Protect route + load user
   useEffect(() => {
@@ -25,7 +25,13 @@ const [user, setUser] = useState(null);
     if (!storedUser) {
       navigate('/login');
     } else {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Failed to parse user data:", error);
+        localStorage.removeItem('user');
+        navigate('/login');
+      }
     }
   }, [navigate]);
 
@@ -33,10 +39,10 @@ const [user, setUser] = useState(null);
   if (!user) return null;
   return (
     <div>
-        
-         
- 
- {/* Navigation Bar */}
+
+
+
+      {/* Navigation Bar */}
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography

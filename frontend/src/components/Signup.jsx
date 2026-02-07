@@ -15,11 +15,22 @@ import {
   Card,
   CardContent,
   MenuItem,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
 
   const [form, setForm] = useState({
     username: "",
@@ -35,7 +46,7 @@ const Signup = () => {
   });
 
   const handleChange = (e) => {
-    setForm({ ...                                                                                                                                               form, [e.target.name]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -77,8 +88,8 @@ const Signup = () => {
       console.error(error.response?.data || error.message);
       alert(
         error.response?.data?.non_field_errors ||
-          JSON.stringify(error.response?.data) ||
-          "Signup failed"
+        JSON.stringify(error.response?.data) ||
+        "Signup failed"
       );
     }
   };
@@ -107,7 +118,7 @@ const Signup = () => {
               </Typography>
 
               <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 2 }}>
-                 <TextField
+                <TextField
                   select
                   label="Role"
                   name="role"
@@ -123,6 +134,7 @@ const Signup = () => {
                   <TextField
                     label="Staff Verification Code"
                     name="staff_code"
+                    value={form.staff_code}
                     onChange={handleChange}
                     required
                   />
@@ -131,7 +143,7 @@ const Signup = () => {
                 <TextField label="Last Name" name="last_name" onChange={handleChange} required />
                 <TextField label="Register Number" name="username" onChange={handleChange} required />
                 <TextField label="College Email" name="email" type="email" onChange={handleChange} required />
-                
+
                 <TextField
                   select
                   label="Department"
@@ -164,13 +176,47 @@ const Signup = () => {
                 <TextField label="Phone Number" name="phone_no" onChange={handleChange} required />
 
 
-                <TextField label="Password" type="password" name="password" onChange={handleChange} required />
+                <TextField
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  onChange={handleChange}
+                  required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
                 <TextField
                   label="Confirm Password"
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   name="confirm_password"
                   onChange={handleChange}
                   required
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle confirm password visibility"
+                          onClick={handleClickShowConfirmPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
                 />
 
                 <Button type="submit" variant="contained" size="large">

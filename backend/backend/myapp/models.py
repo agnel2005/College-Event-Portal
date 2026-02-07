@@ -18,7 +18,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     staff_code = models.CharField(max_length=50, blank=True, null=True)
 
-    REQUIRED_FIELDS = ['email', 'phone_no', 'department', 'rollnumber', 'role','staff_code']
+    REQUIRED_FIELDS = ['email', 'phone_no', 'department', 'role','staff_code']
     def __str__(self):
         return self.username
 
@@ -63,12 +63,13 @@ class Event(models.Model):
     )
 
     approved_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='approved_events'
-    )
+    User,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name="approved_events"
+)
+
 
     # 🔽 CREATION INFO
     created_by = models.ForeignKey(
