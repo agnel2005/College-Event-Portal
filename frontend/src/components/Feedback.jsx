@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import Navbar from './Navbar';
 // ... rest of imports
 import {
@@ -38,10 +40,27 @@ const Feedback = () => {
     }
   }, [navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ rating, message });
-    // later → send to backend
+    if (rating === 0) {
+      toast.error("Please provide a rating");
+      return;
+    }
+
+    try {
+      await axios.post('http://127.0.0.1:8000/api/feedback/submit/', {
+        username: user.username,
+        rating,
+        message,
+      });
+      toast.success("Thank you for your feedback!");
+      setRating(0);
+      setMessage('');
+      setTimeout(() => navigate('/home'), 2000);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to submit feedback");
+    }
   };
 
   // Prevent render until user is loaded

@@ -17,7 +17,9 @@ from .serializers import EventSerializer
 # ------------------------------------------------------------------------
 
 
-from django.shortcuts import get_object_or_404                # imports for manage events views
+from django.shortcuts import render, get_object_or_404                # imports for manage events views
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import User
 
 # ------------------------------------------------------------------------
@@ -51,6 +53,7 @@ class LoginView(APIView):
                     "last_name": user.last_name,
                     "department": user.department,
                     "role": user.role,
+                    "phone_no": user.phone_no,  # ✅ ADD THIS LINE
                 }
             }, status=status.HTTP_200_OK)
 
@@ -58,8 +61,71 @@ class LoginView(APIView):
     
 # ------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------
+
+# 🔹 CHANGE PASSWORD
+class ChangePasswordView(APIView):
+    # Depending on auth setup, might need permission_classes = [AllowAny] or IsAuthenticated
+    # User is passed via request body "username" or "user_id" if not using session auth
+    # user said "login again", so we assume no session persist or just manual re-login
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+
+        if not username or not old_password or not new_password:
+            return Response(
+                {"error": "All fields are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = get_object_or_404(User, username=username)
+
+        if not user.check_password(old_password):
+            return Response(
+                {"error": "Incorrect old password"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response(
+            {"message": "Password changed successfully. Please login again."},
+            status=status.HTTP_200_OK
+        )
 
 # VIEW TO CREATE EVENT REQUEST
+
+
+class CancelEventView(APIView):
+    permission_classes = [AllowAny]
+
+    def delete(self, request, event_id):
+        event = get_object_or_404(Event, id=event_id)
+        user_id = request.data.get("user_id")
+
+        # Optional: Security check to ensure the user owns the event
+        if user_id:
+            if event.created_by.id != user_id:
+                return Response(
+                    {"error": "You can only cancel your own events"},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+        if event.approval_status != 'pending':
+            return Response(
+                {"error": "Cannot cancel an event that is already processed"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        event.delete()
+        return Response(
+            {"message": "Event request cancelled successfully"},
+            status=status.HTTP_200_OK
+        )
 
 
 class CreateEventView(APIView):
@@ -131,9 +197,23 @@ class ApproveEventView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        remark = request.data.get("remark", "")
+
         event.approval_status = "approved"
         event.approved_by_id = staff_id
+        event.remark = remark
         event.save()
+
+        # 📧 SEND EMAIL (Safe Mode: Failures won't stop approval)
+        try:
+            subject = f"Event Approved: {event.title}"
+            message = f"Hello {event.created_by.first_name},\n\nYour event '{event.title}' has been APPROVED.\n\nRemark: {remark}\n\nRegards,\nCampus Event Staff"
+            recipient_list = [event.created_by.email]
+            
+            send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+            print(f"📧 Email sent to {event.created_by.email}")
+        except Exception as e:
+            print(f"⚠️ Failed to send email: {e}")
 
         return Response(
             {"message": "Event approved"},
@@ -168,9 +248,23 @@ class RejectEventView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        remark = request.data.get("remark", "")
+
         event.approval_status = "rejected"
         event.approved_by_id = staff_id
+        event.remark = remark
         event.save()
+
+        # 📧 SEND EMAIL (Safe Mode: Failures won't stop rejection)
+        try:
+            subject = f"Event Rejected: {event.title}"
+            message = f"Hello {event.created_by.first_name},\n\nYour event '{event.title}' has been REJECTED.\n\nReason/Remark: {remark}\n\nRegards,\nCampus Event Staff"
+            recipient_list = [event.created_by.email]
+            
+            send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+            print(f"📧 Email sent to {event.created_by.email}")
+        except Exception as e:
+            print(f"⚠️ Failed to send email: {e}")
 
         return Response(
             {"message": "Event rejected"},
@@ -307,6 +401,45 @@ class DeleteUserView(APIView):
             {"message": "Student deleted successfully"},
             status=status.HTTP_200_OK
         )
+
+
+
+# -------------------------------------------------------------
+# FEEDBACK VIEWS
+# -------------------------------------------------------------
+
+from .models import Feedback
+from .serializers import FeedbackSerializer
+
+class SubmitFeedbackView(APIView):
+    def post(self, request):
+        serializer = FeedbackSerializer(data=request.data)
+        if serializer.is_valid():
+           # Manually manually binding user if we can find them
+           # The serializer has user as read_only string related field.
+           # We need to save the user instance.
+           
+           username = request.data.get('username')
+           if username:
+               try:
+                   user = User.objects.get(username=username)
+                   serializer.save(user=user)
+                   return Response({"message": "Feedback submitted successfully"}, status=status.HTTP_201_CREATED)
+               except User.DoesNotExist:
+                   return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+           # If no username, maybe fail? or allow anonymous? The model has User as ForeignKey... so it is required.
+           return Response({"error": "Username required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListFeedbackView(APIView):
+    def get(self, request):
+        feedback = Feedback.objects.all()
+        serializer = FeedbackSerializer(feedback, many=True)
+        return Response(serializer.data)
+
 
 # -----------------------------------------------------------------------------------
 

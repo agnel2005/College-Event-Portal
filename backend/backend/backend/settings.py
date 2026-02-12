@@ -146,3 +146,13 @@ MEDIA_URL = '/media/'
 # BASE_DIR is d:\django_main\backend\backend
 # So we need to point to BASE_DIR / 'backend' / 'media'
 MEDIA_ROOT = BASE_DIR / 'backend' / 'media'
+
+
+# 📧 EMAIL CONFIGURATION (SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# ⚠️ REPLACE WITH YOUR REAL CREDENTIALS OR USE .ENV FILE
+EMAIL_HOST_USER = 'campus.events12@gmail.com'
+EMAIL_HOST_PASSWORD = 'hfsd umst plov rmgg'

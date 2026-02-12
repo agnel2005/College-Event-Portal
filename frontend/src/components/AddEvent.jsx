@@ -16,6 +16,8 @@ import {
 } from '@mui/material';
 import { ArrowBack, CloudUpload } from '@mui/icons-material';
 import Navbar from './Navbar';
+import { toast } from 'react-hot-toast';
+
 
 const AddEvent = () => {
   const navigate = useNavigate();
@@ -93,17 +95,21 @@ const AddEvent = () => {
 
       const text = await response.text(); // 👈 DEBUG SAFE
 
+
       if (response.ok) {
-        alert('Event request submitted successfully! ✅');
+        toast.success('Event request submitted successfully! ✅');
         navigate('/myevents');
+
       } else {
         console.error(text);
-        alert('Failed to submit event request');
+        toast.error('Failed to submit event request');
       }
+
     } catch (error) {
       console.error(error);
-      alert('Something went wrong');
+      toast.error('Something went wrong');
     }
+
   };
 
 

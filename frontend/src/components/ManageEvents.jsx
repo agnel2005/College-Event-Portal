@@ -45,6 +45,12 @@ const ManageEvents = () => {
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  // remark dialog states
+  const [remarkDialogOpen, setRemarkDialogOpen] = useState(false);
+  const [remarkText, setRemarkText] = useState('');
+  const [targetEvent, setTargetEvent] = useState(null);
+  const [actionType, setActionType] = useState(null); // 'approve' or 'reject'
+
 
 
 
@@ -71,14 +77,33 @@ const ManageEvents = () => {
     fetchEvents();
   }, []);
 
+  const handleRemarkOpen = (event, type) => {
+    setTargetEvent(event);
+    setActionType(type);
+    setRemarkText('');
+    setRemarkDialogOpen(true);
+  };
+
+  const handleRemarkSubmit = async () => {
+    if (!targetEvent || !actionType) return;
+
+    if (actionType === 'approve') {
+      await approveEvent(targetEvent.id, remarkText);
+    } else if (actionType === 'reject') {
+      await rejectEvent(targetEvent.id, remarkText);
+    }
+
+    setRemarkDialogOpen(false);
+  };
+
   // ✅ approve
-  const approveEvent = async (id) => {
+  const approveEvent = async (id, remark = "") => {
     console.log(`🟢 Approving event ID: ${id}`);
 
     const res = await fetch(`http://localhost:8000/api/events/${id}/approve/`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ staff_id: user.id }),
+      body: JSON.stringify({ staff_id: user.id, remark: remark }),
     });
 
     if (!res.ok) {
@@ -93,13 +118,13 @@ const ManageEvents = () => {
 
 
   // ❌ reject
-  const rejectEvent = async (id) => {
+  const rejectEvent = async (id, remark = "") => {
     console.log(`🔴 Rejecting event ID: ${id}`);
 
     const res = await fetch(`http://localhost:8000/api/events/${id}/reject/`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ staff_id: user.id }),
+      body: JSON.stringify({ staff_id: user.id, remark: remark }),
     });
 
     if (!res.ok) {
@@ -362,7 +387,7 @@ const ManageEvents = () => {
                           size="small"
                           variant="contained"
                           disabled={event.approval_status === 'approved'}
-                          onClick={() => approveEvent(event.id)}
+                          onClick={() => handleRemarkOpen(event, 'approve')}
                         >
                           Approve ✅
                         </Button>
@@ -372,7 +397,7 @@ const ManageEvents = () => {
                           variant="outlined"
                           color="error"
                           disabled={event.approval_status === 'rejected'}
-                          onClick={() => rejectEvent(event.id)}
+                          onClick={() => handleRemarkOpen(event, 'reject')}
                         >
                           Reject 🚫
                         </Button>
@@ -435,6 +460,40 @@ const ManageEvents = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setViewEvent(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* REMARK DIALOG */}
+      <Dialog open={remarkDialogOpen} onClose={() => setRemarkDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {actionType === 'approve' ? 'Approve Event' : 'Reject Event'}
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            You can add an optional remark for the student.
+          </Typography>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Remark (Optional)"
+            type="text"
+            fullWidth
+            variant="outlined"
+            multiline
+            rows={3}
+            value={remarkText}
+            onChange={(e) => setRemarkText(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRemarkDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleRemarkSubmit}
+            variant="contained"
+            color={actionType === 'approve' ? 'primary' : 'error'}
+          >
+            Confirm
+          </Button>
         </DialogActions>
       </Dialog>
 

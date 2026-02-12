@@ -70,6 +70,8 @@ class Event(models.Model):
     related_name="approved_events"
 )
 
+    remark = models.TextField(blank=True, null=True)
+
 
     # 🔽 CREATION INFO
     created_by = models.ForeignKey(
@@ -86,3 +88,15 @@ class Event(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+
+# FEEDBACK MODEL
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.rating} stars"
+

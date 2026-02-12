@@ -20,6 +20,10 @@ import {
 } from "@mui/material";
 import { ArrowBack, Visibility, VisibilityOff } from "@mui/icons-material";
 
+import { validatePassword } from "../utils/validators";
+import { toast } from 'react-hot-toast';
+
+
 const Signup = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -54,9 +58,16 @@ const Signup = () => {
 
     // frontend password check
     if (form.password !== form.confirm_password) {
-      alert("❌ Passwords do not match");
+      toast.error(" Passwords do not match");
       return;
     }
+
+    const passwordError = validatePassword(form.password);
+    if (passwordError) {
+      toast.error(` ${passwordError}`);
+      return;
+    }
+
 
     try {
       const payload = {
@@ -82,11 +93,13 @@ const Signup = () => {
         { headers: { "Content-Type": "application/json" } }
       );
 
-      alert("✅ Signup successful! Please login.");
+
+
+      toast.success(" Signup successful! Please login.");
       navigate("/login");
     } catch (error) {
       console.error(error.response?.data || error.message);
-      alert(
+      toast.error(
         error.response?.data?.non_field_errors ||
         JSON.stringify(error.response?.data) ||
         "Signup failed"

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Phone } from '@mui/icons-material';
+
 import {
   AppBar,
   Toolbar,
@@ -60,7 +62,7 @@ const Profile = () => {
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-      
+
       {/* Navigation Bar - Matching Home */}
       <AppBar position="sticky" color="default" elevation={1}>
         <Toolbar sx={{ justifyContent: 'space-between', flexWrap: isTablet ? 'wrap' : 'nowrap' }}>
@@ -142,7 +144,7 @@ const Profile = () => {
             >
               {getInitials()}
             </Avatar>
-            
+
             <Box textAlign="center">
               <Typography
                 variant={isMobile ? 'h4' : isTablet ? 'h3' : 'h2'}
@@ -152,19 +154,19 @@ const Profile = () => {
               >
                 {user.first_name} {user.last_name}
               </Typography>
-              
-              <Typography 
-                variant={isMobile ? 'body1' : 'h6'} 
-                paragraph 
+
+              <Typography
+                variant={isMobile ? 'body1' : 'h6'}
+                paragraph
                 sx={{ opacity: 0.9, mb: 2 }}
               >
                 View your personal and academic information
               </Typography>
 
-              <Stack 
-                direction="row" 
-                spacing={1} 
-                justifyContent="center" 
+              <Stack
+                direction="row"
+                spacing={1}
+                justifyContent="center"
                 flexWrap="wrap"
                 sx={{ gap: 1 }}
               >
@@ -196,7 +198,7 @@ const Profile = () => {
       {/* Profile Details - Matching Home Card Style */}
       <Container sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
-          
+
           {/* Personal Information Card */}
           <Grid item xs={12} md={8}>
             <Card
@@ -226,17 +228,17 @@ const Profile = () => {
                         borderRadius: 2,
                       }}
                     >
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          color: 'text.secondary', 
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary',
                           fontWeight: 'bold',
                           textTransform: 'uppercase',
                         }}
                       >
                         First Name
                       </Typography>
-                      <Typography 
+                      <Typography
                         variant={isMobile ? 'body1' : 'h6'}
                         sx={{ fontWeight: 'bold', mt: 0.5 }}
                       >
@@ -254,17 +256,17 @@ const Profile = () => {
                         borderRadius: 2,
                       }}
                     >
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          color: 'text.secondary', 
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary',
                           fontWeight: 'bold',
                           textTransform: 'uppercase',
                         }}
                       >
                         Last Name
                       </Typography>
-                      <Typography 
+                      <Typography
                         variant={isMobile ? 'body1' : 'h6'}
                         sx={{ fontWeight: 'bold', mt: 0.5 }}
                       >
@@ -289,20 +291,20 @@ const Profile = () => {
                     >
                       <Email sx={{ color: 'primary.main', fontSize: 28 }} />
                       <Box flex={1} sx={{ width: '100%' }}>
-                        <Typography 
-                          variant="caption" 
-                          sx={{ 
-                            color: 'text.secondary', 
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
                             fontWeight: 'bold',
                             textTransform: 'uppercase',
                           }}
                         >
                           Email Address
                         </Typography>
-                        <Typography 
-                          variant="body1" 
-                          sx={{ 
-                            fontWeight: 500, 
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
                             mt: 0.5,
                             wordBreak: 'break-word',
                           }}
@@ -312,6 +314,49 @@ const Profile = () => {
                       </Box>
                     </Paper>
                   </Grid>
+
+                  <Grid item xs={12}>
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        p: { xs: 2, sm: 2.5 },
+                        bgcolor: '#f5f5f5',
+                        borderRadius: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2,
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        textAlign: { xs: 'center', sm: 'left' },
+                      }}
+                    >
+                      <Phone sx={{ color: 'primary.main', fontSize: 28 }} />
+                      <Box flex={1} sx={{ width: '100%' }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
+                            fontWeight: 'bold',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          Phone Number
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                            mt: 0.5,
+                            wordBreak: 'break-word',
+                          }}
+                        >
+                          {user.phone_no || 'Not provided'}
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  </Grid>
+
+
+
                 </Grid>
               </CardContent>
             </Card>
@@ -319,8 +364,8 @@ const Profile = () => {
 
           {/* Academic Information Card */}
           <Grid item xs={12} md={4}>
-            <Card 
-              sx={{ 
+            <Card
+              sx={{
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
@@ -338,17 +383,17 @@ const Profile = () => {
 
                 <Stack spacing={{ xs: 2, sm: 3 }}>
                   <Box>
-                    <Stack 
-                      direction="row" 
-                      alignItems="center" 
-                      spacing={1.5} 
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={1.5}
                       mb={1}
                     >
                       <Badge sx={{ color: 'primary.main' }} />
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          color: 'text.secondary', 
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary',
                           fontWeight: 'bold',
                           textTransform: 'uppercase',
                         }}
@@ -356,9 +401,9 @@ const Profile = () => {
                         Register Number
                       </Typography>
                     </Stack>
-                    <Typography 
+                    <Typography
                       variant={isMobile ? 'body1' : 'h6'}
-                      sx={{ 
+                      sx={{
                         fontWeight: 'bold',
                         pl: { xs: 0, sm: 4 },
                         color: 'primary.main',
@@ -371,17 +416,17 @@ const Profile = () => {
                   <Divider />
 
                   <Box>
-                    <Stack 
-                      direction="row" 
-                      alignItems="center" 
-                      spacing={1.5} 
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={1.5}
                       mb={1}
                     >
                       <School sx={{ color: 'primary.main' }} />
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          color: 'text.secondary', 
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary',
                           fontWeight: 'bold',
                           textTransform: 'uppercase',
                         }}
@@ -389,9 +434,9 @@ const Profile = () => {
                         Department
                       </Typography>
                     </Stack>
-                    <Typography 
-                      variant="body1" 
-                      sx={{ 
+                    <Typography
+                      variant="body1"
+                      sx={{
                         fontWeight: 'bold',
                         pl: { xs: 0, sm: 4 },
                       }}
@@ -403,17 +448,17 @@ const Profile = () => {
                   <Divider />
 
                   <Box>
-                    <Stack 
-                      direction="row" 
-                      alignItems="center" 
-                      spacing={1.5} 
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={1.5}
                       mb={1}
                     >
                       <AccountCircle sx={{ color: 'primary.main' }} />
-                      <Typography 
-                        variant="caption" 
-                        sx={{ 
-                          color: 'text.secondary', 
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary',
                           fontWeight: 'bold',
                           textTransform: 'uppercase',
                         }}
@@ -439,8 +484,8 @@ const Profile = () => {
 
           {/* Action Buttons Card - Matching Home */}
           <Grid item xs={12}>
-            <Card 
-              sx={{ 
+            <Card
+              sx={{
                 borderRadius: 3,
               }}
             >
@@ -452,12 +497,12 @@ const Profile = () => {
                 >
                   Account Actions
                 </Typography>
-                
-                <Stack 
-                  direction={{ xs: 'column', sm: 'row' }} 
+
+                <Stack
+                  direction={{ xs: 'column', sm: 'row' }}
                   spacing={2}
                 >
-                  
+
                   <Button
                     onClick={() => navigate('/ChangePassword')}
                     variant="contained"
@@ -471,7 +516,7 @@ const Profile = () => {
                       '&:hover': { bgcolor: 'primary.dark' },
                     }}
                   >
-                    Change Password
+                    Update Password
                   </Button>
                 </Stack>
               </CardContent>

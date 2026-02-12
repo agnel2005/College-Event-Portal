@@ -135,5 +135,18 @@ class EventSerializer(serializers.ModelSerializer):
             'approval_status',
             'created_by',
             'approved_by',
+            'remark',
         ]
+
+
+# FEEDBACK SERIALIZER
+from .models import Feedback
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Feedback
+        fields = ['id', 'user', 'rating', 'message', 'created_at']
+
 

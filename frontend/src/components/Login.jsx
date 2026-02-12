@@ -18,6 +18,8 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { ArrowBack, Visibility, VisibilityOff } from '@mui/icons-material';
+import { toast } from 'react-hot-toast';
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -52,9 +54,11 @@ const Login = () => {
       // store user (temporary, JWT later)
       localStorage.setItem('user', JSON.stringify(user));
 
-      alert('✅ Login successful');
+
+      toast.success(' Login successful');
 
       // role-based redirect
+
       if (user.role === 'staff') {
         navigate('/staff-dashboard');
       } else {
@@ -63,7 +67,7 @@ const Login = () => {
 
     } catch (error) {
       console.error(error.response?.data || error.message);
-      alert('❌ Invalid username or password');
+      toast.error(' Invalid username or password');
     }
   };
 

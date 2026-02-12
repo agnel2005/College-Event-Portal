@@ -72,8 +72,12 @@ const MyEvents = () => {
 
     try {
       await fetch(
-        `http://127.0.0.1:8000/api/events/${cancelTarget}/delete/`,
-        { method: 'DELETE' }
+        `http://127.0.0.1:8000/api/events/${cancelTarget}/cancel/`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: user.id }),
+        }
       );
 
       setCancelTarget(null);
@@ -130,7 +134,14 @@ const MyEvents = () => {
                     <TableRow key={event.id}>
                       <TableCell>{event.title}</TableCell>
                       <TableCell>{event.category}</TableCell>
-                      <TableCell>{statusChip(event.approval_status)}</TableCell>
+                      <TableCell>
+                        {statusChip(event.approval_status)}
+                        {event.remark && (
+                          <Typography variant="caption" display="block" sx={{ mt: 1, color: 'text.secondary', fontStyle: 'italic' }}>
+                            "{event.remark}"
+                          </Typography>
+                        )}
+                      </TableCell>
 
                       <TableCell>
                         {event.approval_status === 'approved' && event.approved_by ? (
