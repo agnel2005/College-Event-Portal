@@ -65,7 +65,10 @@ const AdminDashboard = () => {
     phoneNo: "",
     department: "",
     role: "student",
+    password: "",
   });
+
+  const [showNewUserPassword, setShowNewUserPassword] = useState(false);
 
   // Edit User Dialog State
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -138,7 +141,7 @@ const AdminDashboard = () => {
   // Add new user
   const handleAddUser = async () => {
     // Validation
-    if (!newUser.firstName.trim() || !newUser.lastName.trim() || !newUser.email.trim() || !newUser.username.trim()) {
+    if (!newUser.firstName.trim() || !newUser.lastName.trim() || !newUser.email.trim() || !newUser.username.trim() || !newUser.password.trim()) {
       toast.error("All fields are required");
       return;
     }
@@ -170,6 +173,7 @@ const AdminDashboard = () => {
         phone_no: newUser.phoneNo,
         department: newUser.department,
         role: newUser.role.toLowerCase(),
+        password: newUser.password,
       };
 
       const response = await createUser(userData, currentUser.id);
@@ -198,6 +202,7 @@ const AdminDashboard = () => {
         phoneNo: "",
         department: "",
         role: "student",
+        password: "",
       });
 
       toast.success("User created successfully");
@@ -436,6 +441,31 @@ const AdminDashboard = () => {
                       onChange={handleChange}
                       variant="outlined"
                       size="small"
+                    />
+
+                    <TextField
+                      fullWidth
+                      label="Password"
+                      name="password"
+                      type={showNewUserPassword ? "text" : "password"}
+                      value={newUser.password}
+                      onChange={handleChange}
+                      variant="outlined"
+                      size="small"
+                      InputProps={{
+                        startAdornment: <PasswordIcon sx={{ color: 'text.secondary', mr: 1, fontSize: 20 }} />,
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowNewUserPassword(!showNewUserPassword)}
+                              edge="end"
+                              size="small"
+                            >
+                              {showNewUserPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
 
                     <FormControl fullWidth size="small">
