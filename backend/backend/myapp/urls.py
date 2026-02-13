@@ -22,6 +22,11 @@ from .views import (
     SubmitFeedbackView,
     ListFeedbackView,
     InsightsView,
+    
+    # NEW ADMIN USER MANAGEMENT VIEWS
+    AdminUserListView,
+    AdminUserCreateView,
+    AdminUserDetailView,
 )
 
 urlpatterns = [
@@ -58,5 +63,10 @@ urlpatterns = [
     
     # NEW - INSIGHTS
     path('insights/', InsightsView.as_view()),
+    
+    # NEW - ADMIN USER MANAGEMENT (For AdminDashboard)
+    path('admin/users/', AdminUserListView.as_view()),
+    path('admin/users/create/', AdminUserCreateView.as_view()),
+    path('admin/users/<int:user_id>/', AdminUserDetailView.as_view()),
 ]
 

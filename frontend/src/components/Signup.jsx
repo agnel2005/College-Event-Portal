@@ -45,7 +45,7 @@ const Signup = () => {
     phone_no: "",
     password: "",
     confirm_password: "",
-    role: "",
+    role: "student",
     staff_code: "",
   });
 
@@ -131,27 +131,6 @@ const Signup = () => {
               </Typography>
 
               <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 2 }}>
-                <TextField
-                  select
-                  label="Role"
-                  name="role"
-                  value={form.role}
-                  onChange={handleChange}
-                  required
-                >
-                  <MenuItem value="student">Student</MenuItem>
-                  <MenuItem value="staff">Staff</MenuItem>
-                </TextField>
-
-                {form.role === "staff" && (
-                  <TextField
-                    label="Staff Verification Code"
-                    name="staff_code"
-                    value={form.staff_code}
-                    onChange={handleChange}
-                    required
-                  />
-                )}
                 <TextField label="First Name" name="first_name" onChange={handleChange} required />
                 <TextField label="Last Name" name="last_name" onChange={handleChange} required />
                 <TextField label="Register Number" name="username" onChange={handleChange} required />

@@ -9,7 +9,7 @@ print("🔥 LOADING myapp.views from:", __file__)     # this line is for testing
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserManagementSerializer, UserCreateSerializer
 # ------------------------------------------------------------------------
 from rest_framework.permissions import AllowAny # imports for create event view
 from .models import Event
@@ -501,3 +501,167 @@ class InsightsView(APIView):
             "pending": pending,
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+# =========================================================
+# ADMIN USER MANAGEMENT VIEWS (For AdminDashboard)
+# =========================================================
+
+class AdminUserListView(APIView):
+    """GET all users for admin dashboard"""
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        admin_id = request.query_params.get('admin_id')
+        
+        # Verify requester is admin
+        if admin_id:
+            try:
+                admin = User.objects.get(id=admin_id)
+                if admin.role != 'admin':
+                    return Response(
+                        {"error": "Only admins can access this endpoint"},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except User.DoesNotExist:
+                return Response(
+                    {"error": "Admin not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        
+        users = User.objects.all()
+        serializer = UserManagementSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdminUserCreateView(APIView):
+    """POST to create new user for admin dashboard"""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        admin_id = request.data.get('admin_id')
+        
+        # Verify requester is admin
+        if admin_id:
+            try:
+                admin = User.objects.get(id=admin_id)
+                if admin.role != 'admin':
+                    return Response(
+                        {"error": "Only admins can create users"},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except User.DoesNotExist:
+                return Response(
+                    {"error": "Admin not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        
+        # Check for username/email uniqueness
+        username = request.data.get('username')
+        email = request.data.get('email')
+        
+        if User.objects.filter(username=username).exists():
+            return Response(
+                {"error": "Username already exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if User.objects.filter(email=email).exists():
+            return Response(
+                {"error": "Email already exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminUserDetailView(APIView):
+    """PATCH to update user role, DELETE to remove user"""
+    permission_classes = [AllowAny]
+
+    def patch(self, request, user_id):
+        admin_id = request.data.get('admin_id')
+        
+        # Verify requester is admin
+        if admin_id:
+            try:
+                admin = User.objects.get(id=admin_id)
+                if admin.role != 'admin':
+                    return Response(
+                        {"error": "Only admins can update users"},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except User.DoesNotExist:
+                return Response(
+                    {"error": "Admin not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        
+        user = get_object_or_404(User, id=user_id)
+        
+        # Update fields if provided
+        new_role = request.data.get('role')
+        if new_role:
+            if new_role not in ['student', 'staff', 'admin']:
+                return Response(
+                    {"error": "Invalid role. Must be 'student', 'staff', or 'admin'"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            user.role = new_role
+            
+        new_username = request.data.get('username')
+        if new_username:
+            if User.objects.filter(username=new_username).exclude(id=user.id).exists():
+                return Response(
+                    {"error": "Username already exists"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            user.username = new_username
+            
+        new_password = request.data.get('password')
+        if new_password:
+            user.set_password(new_password)
+            
+        user.save()
+        
+        serializer = UserManagementSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, user_id):
+        admin_id = request.data.get('admin_id')
+        
+        # Verify requester is admin
+        if admin_id:
+            try:
+                admin = User.objects.get(id=admin_id)
+                if admin.role != 'admin':
+                    return Response(
+                        {"error": "Only admins can delete users"},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+            except User.DoesNotExist:
+                return Response(
+                    {"error": "Admin not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        
+        user = get_object_or_404(User, id=user_id)
+        
+        # Prevent deletion of all admin users
+        if user.role == 'admin':
+            admin_count = User.objects.filter(role='admin').count()
+            if admin_count <= 1:
+                return Response(
+                    {"error": "Cannot delete the last admin user"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        user.delete()
+        return Response(
+            {"message": "User deleted successfully"},
+            status=status.HTTP_200_OK
+        )

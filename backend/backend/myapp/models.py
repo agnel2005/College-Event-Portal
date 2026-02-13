@@ -1,6 +1,4 @@
 # backend/backend/myapp/models.py
-
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -11,6 +9,7 @@ class User(AbstractUser):
     ROLE_CHOICES = (
         ('student', 'Student'),
         ('staff', 'Staff'),
+        ('admin', 'Admin'),
     )
 
     phone_no = models.CharField(max_length=15)
@@ -21,8 +20,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['email', 'phone_no', 'department', 'role','staff_code']
     def __str__(self):
         return self.username
-
-
 
 
 # EVENT MODEL

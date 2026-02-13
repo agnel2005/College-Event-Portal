@@ -150,3 +150,38 @@ class FeedbackSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'rating', 'message', 'created_at']
 
 
+# USER MANAGEMENT SERIALIZER (For Admin Dashboard)
+class UserManagementSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    password = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'role', 'department', 'phone_no', 'password']
+        read_only_fields = ['id']
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip()
+
+
+# USER CREATE SERIALIZER (For Admin Dashboard - Create User)
+class UserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password', 'role', 'phone_no', 'department']
+
+    def validate_role(self, value):
+        if value not in ['student', 'staff', 'admin']:
+            raise serializers.ValidationError("Invalid role. Must be 'student', 'staff', or 'admin'.")
+        return value
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', 'TempPassword@2026')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+
