@@ -78,6 +78,13 @@ const ManageEvents = () => {
   }, []);
 
   const handleRemarkOpen = (event, type) => {
+    // 🚫 department mismatch check
+    if (user.department !== event.created_by.department) {
+      setToastMessage('You are not authorized to modify events from another department');
+      setToastOpen(true);
+      return;
+    }
+
     setTargetEvent(event);
     setActionType(type);
     setRemarkText('');
@@ -383,45 +390,51 @@ const ManageEvents = () => {
                           View 🛈︎
                         </Button>
 
-                        <Button
-                          size="small"
-                          variant="contained"
-                          disabled={event.approval_status === 'approved'}
-                          onClick={() => handleRemarkOpen(event, 'approve')}
-                        >
-                          Approve ✅
-                        </Button>
+                        {(() => {
+                          const isUnauthorized = user.department !== event.created_by.department;
+                          return (
+                            <>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                disabled={event.approval_status === 'approved' || isUnauthorized}
+                                onClick={() => handleRemarkOpen(event, 'approve')}
+                              >
+                                Approve ✅
+                              </Button>
 
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                          disabled={event.approval_status === 'rejected'}
-                          onClick={() => handleRemarkOpen(event, 'reject')}
-                        >
-                          Reject 🚫
-                        </Button>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                color="error"
+                                disabled={event.approval_status === 'rejected' || isUnauthorized}
+                                onClick={() => handleRemarkOpen(event, 'reject')}
+                              >
+                                Reject 🚫
+                              </Button>
 
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          color="warning"
-                          disabled={event.approval_status === 'pending'}
-                          onClick={() => resetToPending(event)}
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                color="warning"
+                                disabled={event.approval_status === 'pending' || isUnauthorized}
+                                onClick={() => resetToPending(event)}
+                              >
+                                Pending ⏳
+                              </Button>
 
-                        >
-                          Pending ⏳
-                        </Button>
-
-                        <Button
-                          size="small"
-                          variant="text"
-                          color="error"
-                          onClick={() => deleteEvent(event)}
-
-                        >
-                          Delete 🗑️
-                        </Button>
+                              <Button
+                                size="small"
+                                variant="text"
+                                color="error"
+                                disabled={isUnauthorized}
+                                onClick={() => deleteEvent(event)}
+                              >
+                                Delete 🗑️
+                              </Button>
+                            </>
+                          );
+                        })()}
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -453,7 +466,26 @@ const ManageEvents = () => {
               <Typography><strong>Venue:</strong> {viewEvent.venue}</Typography>
               <Typography><strong>Description:</strong><br />{viewEvent.description}</Typography>
               {viewEvent.poster_image && (
-                <Box component="img" src={viewEvent.poster_image} sx={{ width: '100%', borderRadius: 2 }} />
+                <Box
+                  component="a"
+                  href={viewEvent.poster_image.startsWith('http') ? viewEvent.poster_image : `http://127.0.0.1:8000${viewEvent.poster_image}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ display: 'block', mt: 2 }}
+                >
+                  <Box
+                    component="img"
+                    src={viewEvent.poster_image.startsWith('http') ? viewEvent.poster_image : `http://127.0.0.1:8000${viewEvent.poster_image}`}
+                    alt="Event Poster"
+                    sx={{
+                      width: '100%',
+                      borderRadius: 2,
+                      border: '1px solid #ddd',
+                      cursor: 'pointer',
+                      '&:hover': { opacity: 0.9 }
+                    }}
+                  />
+                </Box>
               )}
             </Stack>
           )}

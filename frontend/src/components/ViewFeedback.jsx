@@ -40,13 +40,13 @@ const ViewFeedback = () => {
         }
         setUser(parsedUser);
 
-        fetchFeedback();
+        fetchFeedback(parsedUser.id);
     }, [navigate]);
 
-    const fetchFeedback = async () => {
+    const fetchFeedback = async (staffId) => {
         try {
             // In a real app, you might want pagination or filtering
-            const response = await axios.get('http://127.0.0.1:8000/api/feedback/list/');
+            const response = await axios.get(`http://127.0.0.1:8000/api/feedback/list/?staff_id=${staffId}`);
             setFeedbacks(response.data);
         } catch (error) {
             console.error("Failed to fetch feedback", error);
@@ -59,14 +59,20 @@ const ViewFeedback = () => {
         <Box sx={{ flexGrow: 1, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
 
             {/* Navbar */}
-            <AppBar position="sticky" color="default" elevation={1}>
-                <Toolbar>
-                    <Button startIcon={<ArrowBack />} onClick={() => navigate('/staff-dashboard')}>
-                        Dashboard
-                    </Button>
-                    <Typography variant="h6" sx={{ flexGrow: 1, ml: 2, fontWeight: 'bold', color: 'primary.main' }}>
-                        Student Feedback
-                    </Typography>
+            <AppBar position="sticky" sx={{ bgcolor: 'primary.main' }} elevation={1}>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <Button
+                            color="inherit"
+                            startIcon={<ArrowBack />}
+                            onClick={() => navigate('/staff-dashboard')}
+                        >
+                            Back
+                        </Button>
+                        <Typography variant="h6" fontWeight="bold">
+                            Student Feedback
+                        </Typography>
+                    </Stack>
                 </Toolbar>
             </AppBar>
 

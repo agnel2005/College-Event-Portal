@@ -8,6 +8,7 @@ from .views import (
     LoginView,
     CreateEventView,    #request to create event from users(students)
     CancelEventView,    # NEW: Student cancel request
+    ApprovedEventsView, # NEW: For Home Page
 
     # NEW STAFF VIEWS(staff dashboard - event management & user management)
     ListEventsView,
@@ -20,6 +21,7 @@ from .views import (
     ChangePasswordView,
     SubmitFeedbackView,
     ListFeedbackView,
+    InsightsView,
 )
 
 urlpatterns = [
@@ -31,6 +33,7 @@ urlpatterns = [
 
 
     # NEW – STAFF EVENT MANAGEMENT
+    path('events/approved/', ApprovedEventsView.as_view()), # For Home Page
     path('events/', ListEventsView.as_view()),
     path('events/<int:event_id>/approve/', ApproveEventView.as_view()),
     path('events/<int:event_id>/reject/', RejectEventView.as_view()),
@@ -52,5 +55,8 @@ urlpatterns = [
     # NEW – FEEDBACK
     path('feedback/submit/', SubmitFeedbackView.as_view()),
     path('feedback/list/', ListFeedbackView.as_view()),
+    
+    # NEW - INSIGHTS
+    path('insights/', InsightsView.as_view()),
 ]
 

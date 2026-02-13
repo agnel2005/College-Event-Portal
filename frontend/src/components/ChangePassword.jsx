@@ -115,10 +115,10 @@ const ChangePassword = () => {
           <Button
             startIcon={<ArrowBack />}
             color="primary"
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate(user.role === 'staff' ? '/staff-profile' : '/profile')}
             sx={{ mr: 2 }}
           >
-            Back to Profile
+            {user.role === 'staff' ? 'Back to Staff Profile' : 'Back to Profile'}
           </Button>
 
           <Typography

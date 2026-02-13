@@ -53,6 +53,11 @@ class Event(models.Model):
     end_time = models.TimeField()
     venue = models.CharField(max_length=200)
     description = models.TextField()
+    # 🖼️ IMAGE FIELD EXPLANATION:
+    # - models.ImageField: Django's field for storing image files.
+    # - upload_to='event_posters/': This tells Django to save the actual image in 'media/event_posters/' folder.
+    # - The database ONLY stores the path (e.g., 'event_posters/my_image.jpg'), NOT the image itself.
+    # - blank=True, null=True: Makes this field optional (user doesn't have to upload an image).
     poster_image = models.ImageField(upload_to='event_posters/', blank=True, null=True)
 
     # 🔽 APPROVAL INFO

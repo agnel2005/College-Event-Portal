@@ -9,7 +9,10 @@ import {
   Grid,
   Card,
   CardContent,
+  Stack,
+  Button
 } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
 
 const Insights = () => {
   const navigate = useNavigate();
@@ -21,19 +24,47 @@ const Insights = () => {
     }
   }, [user, navigate]);
 
-  // Dummy stats
-  const stats = {
-    totalStudents: 120,
-    totalRequests: 45,
-    approved: 30,
-    rejected: 15,
-  };
+  const [stats, setStats] = React.useState({
+    totalStudents: 0,
+    totalRequests: 0,
+    approved: 0,
+    rejected: 0,
+    pending: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/insights/?staff_id=${user.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch insights", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
-      <AppBar position="sticky" color="default">
-        <Toolbar>
-          <Typography variant="h6">Insights</Typography>
+      {/* NAVBAR */}
+      <AppBar position="sticky" sx={{ bgcolor: 'primary.main' }} elevation={1}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Button
+              color="inherit"
+              startIcon={<ArrowBack />}
+              onClick={() => navigate('/staff-dashboard')}
+            >
+              Back
+            </Button>
+            <Typography variant="h6" fontWeight="bold">
+              Insights
+            </Typography>
+          </Stack>
         </Toolbar>
       </AppBar>
 

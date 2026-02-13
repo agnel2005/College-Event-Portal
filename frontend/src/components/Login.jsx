@@ -1,7 +1,7 @@
 // frontend/src/components/Login.jsx
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -23,6 +23,21 @@ import { toast } from 'react-hot-toast';
 
 const Login = () => {
   const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      if (user.role === 'staff') {
+        navigate('/staff-dashboard');
+      } else if (user.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/home');
+      }
+    }
+  }, [navigate]);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -61,6 +76,8 @@ const Login = () => {
 
       if (user.role === 'staff') {
         navigate('/staff-dashboard');
+      } else if (user.role === 'admin') {
+        navigate('/admin-dashboard');
       } else {
         navigate('/home');
       }

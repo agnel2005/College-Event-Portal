@@ -100,25 +100,27 @@ const StaffDashboard = () => {
 
       {/* NAVBAR */}
       {/* NAVBAR */}
-      <AppBar position="sticky" color="default" elevation={1}>
+      {/* NAVBAR */}
+      <AppBar position="sticky" sx={{ bgcolor: 'primary.main' }} elevation={1}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
-          <Typography variant="h6" fontWeight="bold">
+          <Typography variant="h6" fontWeight="bold" color="inherit">
             CampusEvents · Staff
           </Typography>
 
           <Stack direction="row" spacing={2}>
             <Button
               variant="text"
-              color="primary"
+              color="inherit"
               onClick={() => navigate('/staff-profile')}
             >
               Profile
             </Button>
             <Button
               variant="outlined"
-              color="error"
+              color="inherit"
               onClick={handleLogout}
+              sx={{ borderColor: 'rgba(255,255,255,0.5)' }}
             >
               Logout
             </Button>
@@ -130,16 +132,17 @@ const StaffDashboard = () => {
       {/* HERO SECTION */}
       <Box
         sx={{
-          bgcolor: 'white',
+          bgcolor: 'primary.main',
+          color: 'white',
           py: 6,
-          borderBottom: '1px solid #e0e0e0',
+          textAlign: 'center',
         }}
       >
         <Container>
           <Typography variant="h4" fontWeight="bold" gutterBottom>
             Welcome back, {user.first_name} {user.last_name} 👋
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" sx={{ opacity: 0.9 }}>
             Manage event requests, students, and view system insights from here.
           </Typography>
         </Container>

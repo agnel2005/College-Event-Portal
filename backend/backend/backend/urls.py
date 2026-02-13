@@ -36,6 +36,9 @@ urlpatterns = [
     path('api/', include('myapp.urls')),
 ]
 
-# serve media files during development
+# 🖼️ SERVING MEDIA FILES (Development Only)
+# By default, Django does NOT serve media files (like user-uploaded images).
+# We must manually add this route so that when you access 'http://localhost:8000/media/...',
+# Django knows to look in the MEDIA_ROOT folder and send the file back.
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

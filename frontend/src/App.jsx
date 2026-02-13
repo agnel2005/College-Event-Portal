@@ -19,6 +19,8 @@ import ManageEvents from './components/ManageEvents.jsx'
 import ManageUsers from './components/ManageUsers.jsx'
 import Insights from './components/Insights.jsx'
 import ViewFeedback from './components/ViewFeedback.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+import AdminDashboard from './components/AdminDashboard.jsx'
 
 const App = () => {
   return (
@@ -71,23 +73,32 @@ const App = () => {
       />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/feedback" element={<Feedback />} />
         <Route path="/aboutus" element={<AboutUs />} />
-        <Route path="/myevents" element={<MyEvents />} />
-        <Route path="/addevent" element={<AddEvent />} />
-        <Route path="/findevents" element={<FindEvents />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/changepassword" element={<ChangePassword />} />
-        <Route path="/staff-dashboard" element={<StaffDashboard />} />
-        <Route path="/staff-profile" element={<StaffProfile />} />
-        <Route path="/insights" element={<Insights />} />
-        <Route path="/manage-events" element={<ManageEvents />} />
-        <Route path="/manage-users" element={<ManageUsers />} />
-        <Route path="/view-feedback" element={<ViewFeedback />} />
 
+        {/* Student Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['student']} />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/myevents" element={<MyEvents />} />
+          <Route path="/addevent" element={<AddEvent />} />
+          <Route path="/findevents" element={<FindEvents />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
+        </Route>
+
+        {/* Staff Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['staff']} />}>
+          <Route path="/staff-dashboard" element={<StaffDashboard />} />
+          <Route path="/staff-profile" element={<StaffProfile />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/manage-events" element={<ManageEvents />} />
+          <Route path="/manage-users" element={<ManageUsers />} />
+          <Route path="/view-feedback" element={<ViewFeedback />} />
+          <Route path="/staff/change-password" element={<ChangePassword />} />
+        </Route>
+<Route path="/admin-dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   )

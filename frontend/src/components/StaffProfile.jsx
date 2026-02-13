@@ -262,7 +262,7 @@ const StaffProfile = () => {
                                     Account Actions
                                 </Typography>
                                 <Button
-                                    onClick={() => navigate('/ChangePassword')}
+                                    onClick={() => navigate('/staff/change-password')}
                                     variant="contained"
                                     color="primary"
                                     size="large"

@@ -161,6 +161,17 @@ class CreateEventView(APIView):
 
 
 #(event management 👇)
+# 🔹 FETCH APPROVED EVENTS (for Home Page)
+class ApprovedEventsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        # Fetch 3 random approved events
+        events = Event.objects.filter(approval_status='approved').order_by('?')[:3]
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # 🔹 FETCH ALL EVENTS (for staff)
 class ListEventsView(APIView):
     permission_classes = [AllowAny]
@@ -436,6 +447,17 @@ class SubmitFeedbackView(APIView):
 
 class ListFeedbackView(APIView):
     def get(self, request):
+        staff_id = request.query_params.get("staff_id")
+        if not staff_id:
+            return Response({"error": "Staff ID required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+             staff = User.objects.get(id=staff_id)
+             if staff.role != 'staff':
+                 return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+        except User.DoesNotExist:
+             return Response({"error": "Staff not found"}, status=status.HTTP_404_NOT_FOUND)
+
         feedback = Feedback.objects.all()
         serializer = FeedbackSerializer(feedback, many=True)
         return Response(serializer.data)
@@ -445,3 +467,37 @@ class ListFeedbackView(APIView):
 
 
 
+
+# -------------------------------------------------------------
+# INSIGHTS VIEW
+# -------------------------------------------------------------
+
+class InsightsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        staff_id = request.query_params.get("staff_id")
+        if not staff_id:
+            return Response({"error": "Staff ID required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            staff = User.objects.get(id=staff_id)
+            if staff.role != 'staff':
+                 return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+        except User.DoesNotExist:
+             return Response({"error": "Staff not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        total_students = User.objects.filter(role="student").count()
+        total_requests = Event.objects.count()
+        approved = Event.objects.filter(approval_status="approved").count()
+        rejected = Event.objects.filter(approval_status="rejected").count()
+        pending = Event.objects.filter(approval_status="pending").count()
+
+        data = {
+            "totalStudents": total_students,
+            "totalRequests": total_requests,
+            "approved": approved,
+            "rejected": rejected,
+            "pending": pending,
+        }
+        return Response(data, status=status.HTTP_200_OK)

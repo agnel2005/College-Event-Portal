@@ -140,11 +140,12 @@ AUTH_USER_MODEL = 'myapp.User'
 # MEDIA FILES (for event posters)
 from pathlib import Path
 
-# Media files (user uploaded files)
+# 🖼️ MEDIA CONFIGURATION (For Image Uploads)
+# MEDIA_URL: The URL prefix used in the browser to access the files (e.g., http://localhost:8000/media/image.jpg)
 MEDIA_URL = '/media/'
-# Files were found in d:\django_main\backend\backend\backend\media
-# BASE_DIR is d:\django_main\backend\backend
-# So we need to point to BASE_DIR / 'backend' / 'media'
+
+# MEDIA_ROOT: The ABSOLUTE filesystem path where files are actually saved on your computer.
+# BASE_DIR is the project folder, so this saves files in "backend/backend/media" folder.
 MEDIA_ROOT = BASE_DIR / 'backend' / 'media'
 
 

@@ -72,24 +72,31 @@ const AddEvent = () => {
     setImagePreview(null);
   };
 
-  // ✅ FINAL POST LOGIC (ONLY NEW PART)
+  // ✅ FINAL POST LOGIC With Image Upload Explanation
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 📦 FORM DATA EXPLANATION:
+    // Normally we send JSON data. typically application/json
+    // BUT, JSON cannot handle binary files (like images).
+    // So we use "FormData" which allows us to send Key-Value pairs, including Files.
+    // The browser automatically sets the header "Content-Type: multipart/form-data".
     const payload = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
+      // Append each field to the payload.
+      // If 'value' is an image file (from handleImageChange), it gets attached as binary data.
       if (value) payload.append(key, value);
     });
 
-    payload.append('created_by', user.id); // 🔥 THIS FIXES IT
+    payload.append('created_by', user.id); // Linking the event to the logged-in student
 
     try {
       const response = await fetch(
         'http://localhost:8000/api/events/create/',
         {
           method: 'POST',
-          body: payload,
+          body: payload, // Sending the FormData object
         }
       );
 
