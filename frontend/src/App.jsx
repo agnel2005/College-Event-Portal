@@ -98,7 +98,10 @@ const App = () => {
           <Route path="/view-feedback" element={<ViewFeedback />} />
           <Route path="/staff/change-password" element={<ChangePassword />} />
         </Route>
-<Route path="/admin-dashboard" element={<AdminDashboard />} />
+        {/* Admin Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        </Route>
       </Routes>
     </Router>
   )

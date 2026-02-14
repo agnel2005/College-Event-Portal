@@ -14,6 +14,12 @@ import {
   TextField,
   Grid,
   Chip,
+  Button,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 
 
@@ -32,6 +38,7 @@ const FindEvents = () => {
 
   // 🔍 search input
   const [search, setSearch] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   // 🔐 protect route (students only)
   useEffect(() => {
@@ -73,8 +80,11 @@ const FindEvents = () => {
 
       {/* 📋 CONTENT */}
       <Container sx={{ mt: 5, flexGrow: 1 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Approved College Events
+        <Typography variant="h4" fontWeight="bold" gutterBottom>
+          Find Events
+        </Typography>
+        <Typography variant="body1" color="text.secondary" paragraph>
+          Discover and register for upcoming events happening on campus.
         </Typography>
 
         {/* 🔍 SEARCH BAR */}
@@ -83,20 +93,33 @@ const FindEvents = () => {
           placeholder="Search events by title..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          sx={{ mb: 4 }}
+          sx={{ mb: 4, bgcolor: 'white', borderRadius: 1 }}
         />
 
         {/* 📦 EVENTS GRID */}
         {filteredEvents.length === 0 ? (
-          <Typography color="text.secondary">
-            No events found.
+          <Typography color="text.secondary" align="center" sx={{ mt: 4 }}>
+            No events found matching your search.
           </Typography>
         ) : (
           <Grid container spacing={3}>
             {filteredEvents.map((event) => (
               <Grid item xs={12} sm={6} md={4} key={event.id}>
-                <Card sx={{ height: '100%', borderRadius: 3 }}>
-
+                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: 3,
+                    transition: '0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                      boxShadow: 6,
+                    },
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setSelectedEvent(event)}
+                >
                   {/* 🖼️ Event Poster */}
                   {event.poster_image && (
                     <CardMedia
@@ -114,46 +137,51 @@ const FindEvents = () => {
                     />
                   )}
 
-                  <CardContent>
-
-                    <Typography variant="h6" fontWeight="bold">
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                       {event.title}
                     </Typography>
 
                     <Chip
                       label={event.category}
                       size="small"
-                      sx={{ mt: 1, mb: 2 }}
+                      color="primary"
+                      variant="outlined"
+                      sx={{ mb: 2 }}
                     />
 
-                    <Typography variant="body2">
-                      <strong>Date:</strong>{' '}
-                      {event.start_date} → {event.end_date}
+                    <Typography variant="body2" color="text.secondary" paragraph>
+                      {event.description.length > 100 ? `${event.description.substring(0, 100)}...` : event.description}
                     </Typography>
 
-                    <Typography variant="body2">
-                      <strong>Time:</strong>{' '}
-                      {event.start_time} → {event.end_time}
-                    </Typography>
-
-                    <Typography variant="body2">
-                      <strong>Venue:</strong> {event.venue}
-                    </Typography>
-
-                    <Typography
-                      variant="body2"
-                      sx={{ mt: 1 }}
-                      color="text.secondary"
-                    >
-                      {event.description}
-                    </Typography>
+                    <Stack spacing={1} mt={1}>
+                      <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        📅 {event.start_date}
+                      </Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        📍 {event.venue}
+                      </Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        📞 Contact: {event.created_by.phone_no || 'N/A'}
+                      </Typography>
+                    </Stack>
                   </CardContent>
+
+                  <Box sx={{ p: 2, pt: 0 }}>
+                    <Button fullWidth variant="outlined" size="small" onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedEvent(event);
+                    }}>
+                      View Details
+                    </Button>
+                  </Box>
                 </Card>
               </Grid>
             ))}
           </Grid>
         )}
       </Container>
+
       {/* Footer */}
       <Box sx={{ bgcolor: '#222', color: 'grey.500', py: 6, mt: 8 }}>
         <Container align="center">
@@ -165,6 +193,71 @@ const FindEvents = () => {
           </Typography>
         </Container>
       </Box>
+
+      {/* Event Details Dialog */}
+      <Dialog open={Boolean(selectedEvent)} onClose={() => setSelectedEvent(null)} maxWidth="sm" fullWidth>
+        <DialogTitle>Event Details</DialogTitle>
+        <DialogContent dividers>
+          {selectedEvent && (
+            <Stack spacing={2}>
+              <Typography variant="h5" fontWeight="bold" color="primary.main">
+                {selectedEvent.title}
+              </Typography>
+
+              <Typography>
+                <strong>Category:</strong> {selectedEvent.category}
+              </Typography>
+
+              <Typography>
+                <strong>Hosted By:</strong> {selectedEvent.created_by.first_name} {selectedEvent.created_by.last_name} ({selectedEvent.created_by.department})
+                <br />
+                <strong>Contact:</strong> {selectedEvent.created_by.phone_no || 'N/A'}
+              </Typography>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography variant="body2"><strong>📅 Date:</strong> {selectedEvent.start_date} → {selectedEvent.end_date}</Typography>
+              </Stack>
+              <Typography variant="body2"><strong>⏰ Time:</strong> {selectedEvent.start_time} - {selectedEvent.end_time}</Typography>
+              <Typography variant="body2"><strong>📍 Venue:</strong> {selectedEvent.venue}</Typography>
+
+              <Typography>
+                <strong>Description:</strong><br />
+                {selectedEvent.description}
+              </Typography>
+
+              {selectedEvent.poster_image && (
+                <Box
+                  component="a"
+                  href={selectedEvent.poster_image.startsWith('http')
+                    ? selectedEvent.poster_image
+                    : selectedEvent.poster_image.startsWith('/media/')
+                      ? `http://127.0.0.1:8000${selectedEvent.poster_image}`
+                      : `http://127.0.0.1:8000/media/${selectedEvent.poster_image.startsWith('/') ? selectedEvent.poster_image.slice(1) : selectedEvent.poster_image}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ display: 'block', mt: 2 }}
+                >
+                  <Box
+                    component="img"
+                    src={selectedEvent.poster_image.startsWith('http')
+                      ? selectedEvent.poster_image
+                      : selectedEvent.poster_image.startsWith('/media/')
+                        ? `http://127.0.0.1:8000${selectedEvent.poster_image}`
+                        : `http://127.0.0.1:8000/media/${selectedEvent.poster_image.startsWith('/') ? selectedEvent.poster_image.slice(1) : selectedEvent.poster_image}`
+                    }
+                    alt="Event Poster"
+                    sx={{ width: '100%', borderRadius: 2 }}
+                  />
+                </Box>
+              )}
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedEvent(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

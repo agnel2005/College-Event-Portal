@@ -98,6 +98,7 @@ class EventRequesterSerializer(serializers.ModelSerializer):
             'last_name',
             'username',
             'department',
+            'phone_no',
         ]
 
 

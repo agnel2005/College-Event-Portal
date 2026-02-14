@@ -260,6 +260,9 @@ const Home = () => {
                           <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
                             📍 {event.venue}
                           </Typography>
+                          <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                            📞 Contact: {event.created_by.phone_no || 'N/A'}
+                          </Typography>
                         </Stack>
 
                       </CardContent>
@@ -312,6 +315,8 @@ const Home = () => {
 
               <Typography>
                 <strong>Hosted By:</strong> {selectedEvent.created_by.first_name} {selectedEvent.created_by.last_name} ({selectedEvent.created_by.department})
+                <br />
+                <strong>Contact:</strong> {selectedEvent.created_by.phone_no || 'N/A'}
               </Typography>
 
               <Stack direction="row" spacing={2} alignItems="center">

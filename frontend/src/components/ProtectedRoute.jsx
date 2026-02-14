@@ -11,7 +11,9 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
     if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
         // Redirect to home or logic for unauthorized role
-        // Assuming 'staff' role has its own dashboard, and 'student' has home
+        if (user.role === 'admin') {
+            return <Navigate to="/admin-dashboard" replace />;
+        }
         return <Navigate to={user.role === 'staff' ? '/staff-dashboard' : '/home'} replace />;
     }
 
