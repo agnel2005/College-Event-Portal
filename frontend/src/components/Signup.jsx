@@ -122,13 +122,20 @@ const Signup = () => {
       </AppBar>
 
       {/* Form */}
-      <Box sx={{ bgcolor: "primary.main", py: 8 }}>
+      <Box sx={{ background: 'linear-gradient(135deg, #0f172a 0%, #23355eff 100%)', py: 8 }}>
         <Container maxWidth="sm">
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Typography variant="h3" gutterBottom sx={{ fontWeight: 800, color: "primary.contrastText" }}>
+              Welcome to CampusEvents
+            </Typography>
+
+            <Typography variant="h6" sx={{ opacity: 0.9, color: "primary.contrastText" }}>
+              Sign up to create your account
+            </Typography>
+          </Box>
           <Card>
             <CardContent>
-              <Typography variant="h4" align="center" gutterBottom>
-                Create Account
-              </Typography>
+              
 
               <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 2 }}>
                 <TextField label="First Name" name="first_name" onChange={handleChange} required />

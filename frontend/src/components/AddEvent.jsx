@@ -17,6 +17,7 @@ import {
 import { ArrowBack, CloudUpload } from '@mui/icons-material';
 import Navbar from './Navbar';
 import { toast } from 'react-hot-toast';
+import Footer from './Footer';
 
 
 const AddEvent = () => {
@@ -127,7 +128,7 @@ const AddEvent = () => {
       {/* Hero Section */}
       <Box
         sx={{
-          bgcolor: 'primary.main',
+          background: 'linear-gradient(135deg, #0f172a 0%, #23355eff 100%)',
           color: 'white',
           py: 6,
           textAlign: 'center',
@@ -305,16 +306,7 @@ const AddEvent = () => {
         </Card>
       </Container>
       {/* Footer */}
-      <Box sx={{ bgcolor: '#222', color: 'grey.500', py: 6, mt: 8 }}>
-        <Container align="center">
-          <Typography variant="body1">
-            © 2026 CampusEvents Management Portal
-          </Typography>
-          <Typography variant="body2">
-            Designed for students, by students.
-          </Typography>
-        </Container>
-      </Box>
+      <Footer />
     </Box>
   );
 };

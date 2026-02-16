@@ -14,9 +14,15 @@ import {
   TextField,
   Grid,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Stack,
 } from '@mui/material';
 
-
+import Footer from './Footer';
 
 
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +38,7 @@ const FindEvents = () => {
 
   // 🔍 search input
   const [search, setSearch] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   // 🔐 protect route (students only)
   useEffect(() => {
@@ -72,7 +79,7 @@ const FindEvents = () => {
       <Navbar />
 
       {/* 📋 CONTENT */}
-      <Container sx={{ mt: 5, flexGrow: 1 }}>
+      <Container sx={{ mt: 5, mb: 5, flexGrow: 1 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Approved College Events
         </Typography>
@@ -92,10 +99,22 @@ const FindEvents = () => {
             No events found.
           </Typography>
         ) : (
-          <Grid container spacing={3}>
+          <Grid container spacing={3} justifyContent="center">
             {filteredEvents.map((event) => (
               <Grid item xs={12} sm={6} md={4} key={event.id}>
-                <Card sx={{ height: '100%', borderRadius: 3 }}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    borderRadius: 3,
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                      boxShadow: 6,
+                    },
+                  }}
+                  onClick={() => setSelectedEvent(event)}
+                >
 
                   {/* 🖼️ Event Poster */}
                   {event.poster_image && (
@@ -155,16 +174,62 @@ const FindEvents = () => {
         )}
       </Container>
       {/* Footer */}
-      <Box sx={{ bgcolor: '#222', color: 'grey.500', py: 6, mt: 8 }}>
-        <Container align="center">
-          <Typography variant="body1">
-            © 2026 CampusEvents Management Portal
-          </Typography>
-          <Typography variant="body2">
-            Designed for students, by students.
-          </Typography>
-        </Container>
-      </Box>
+      <Footer />
+
+
+
+      {/* Event Details Dialog */}
+      <Dialog open={Boolean(selectedEvent)} onClose={() => setSelectedEvent(null)} maxWidth="sm" fullWidth>
+        <DialogTitle>Event Details</DialogTitle>
+        <DialogContent dividers>
+          {selectedEvent && (
+            <Stack spacing={2}>
+              <Typography variant="h5" fontWeight="bold" color="primary.main">
+                {selectedEvent.title}
+              </Typography>
+
+              <Typography>
+                <strong>Category:</strong> {selectedEvent.category}
+              </Typography>
+
+              <Typography>
+                <strong>Hosted By:</strong> {selectedEvent.created_by.first_name} {selectedEvent.created_by.last_name} ({selectedEvent.created_by.department})
+              </Typography>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography variant="body2"><strong>📅 Date:</strong> {selectedEvent.start_date} → {selectedEvent.end_date}</Typography>
+              </Stack>
+              <Typography variant="body2"><strong>⏰ Time:</strong> {selectedEvent.start_time} - {selectedEvent.end_time}</Typography>
+              <Typography variant="body2"><strong>📍 Venue:</strong> {selectedEvent.venue}</Typography>
+
+              <Typography>
+                <strong>Description:</strong><br />
+                {selectedEvent.description}
+              </Typography>
+
+              {selectedEvent.poster_image && (
+                <Box
+                  component="a"
+                  href={selectedEvent.poster_image.startsWith('http') ? selectedEvent.poster_image : `http://127.0.0.1:8000${selectedEvent.poster_image}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ display: 'block', mt: 2 }}
+                >
+                  <Box
+                    component="img"
+                    src={selectedEvent.poster_image.startsWith('http') ? selectedEvent.poster_image : `http://127.0.0.1:8000${selectedEvent.poster_image}`}
+                    alt="Event Poster"
+                    sx={{ width: '100%', borderRadius: 2 }}
+                  />
+                </Box>
+              )}
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedEvent(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
