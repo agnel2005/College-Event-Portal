@@ -115,7 +115,7 @@ const Login = () => {
       {/* Login Section */}
       <Box
         sx={{
-          bgcolor: 'primary.main',
+          background: 'linear-gradient(135deg, #0f172a 0%, #23355eff 100%)',
           color: 'white',
           py: 8,
           minHeight: 'calc(100vh - 64px)',

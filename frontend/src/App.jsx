@@ -21,6 +21,7 @@ import Insights from './components/Insights.jsx'
 import ViewFeedback from './components/ViewFeedback.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
+import Footer from './components/Footer.jsx'
 
 const App = () => {
   return (
@@ -76,6 +77,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/aboutus" element={<AboutUs />} />
+        <Route path="/footer" element={<Footer />} />
 
         {/* Student Routes */}
         <Route element={<ProtectedRoute allowedRoles={['student']} />}>

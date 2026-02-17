@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Phone } from '@mui/icons-material';
+import Footer from './Footer';
 
 import {
   AppBar,
@@ -123,7 +124,7 @@ const Profile = () => {
       {/* Hero Section - Matching Home */}
       <Box
         sx={{
-          bgcolor: 'primary.main',
+          background: 'linear-gradient(135deg, #0f172a 0%, #23355eff 100%)',
           color: 'white',
           py: { xs: 4, sm: 6, md: 8 },
           textAlign: 'center',
@@ -526,16 +527,7 @@ const Profile = () => {
       </Container>
 
       {/* Footer - Matching Home */}
-      <Box sx={{ bgcolor: '#222', color: 'grey.500', py: 6, mt: 8 }}>
-        <Container align="center">
-          <Typography variant="body1">
-            © 2026 CampusEvents Management Portal
-          </Typography>
-          <Typography variant="body2">
-            Designed for students, by students.
-          </Typography>
-        </Container>
-      </Box>
+      <Footer />
     </Box>
   );
 };

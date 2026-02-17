@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { Event, Groups, HistoryEdu } from '@mui/icons-material';
 import Navbar from './Navbar.jsx';
+import Footer from './Footer.jsx';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ const Home = () => {
         {/* Hero Section */}
         <Box
           sx={{
-            bgcolor: 'primary.main',
+            background: 'linear-gradient(135deg, #0f172a 0%, #23355eff 100%)',
             color: 'white',
             py: 8,
             textAlign: 'center',
@@ -130,7 +131,7 @@ const Home = () => {
               gutterBottom
               sx={{ fontWeight: 800 }}
             >
-              Welcome, {user.first_name} 👋
+              Welcome, {user.first_name}
             </Typography>
 
             <Typography variant="h5" paragraph sx={{ opacity: 0.9 }}>
@@ -149,7 +150,19 @@ const Home = () => {
                 onClick={() => navigate('/findevents')}
                 size="large"
                 color="secondary"
-                sx={{ fontWeight: 'bold' }}
+                sx={{
+                  fontWeight: 'bold', fontWeight: 'bold',
+                  textTransform: 'none',
+                  borderRadius: '50px',
+                  px: 3,
+                  background: 'linear-gradient(135deg, #1976d2 30%, #42a5f5 90%)',
+                  boxShadow: '0 4px 14px 0 rgba(25, 118, 210, 0.39)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    boxShadow: '0 6px 20px 0 rgba(25, 118, 210, 0.23)',
+                    transform: 'scale(1.05)'
+                  }
+                }}
               >
                 Find Events
               </Button>
@@ -158,6 +171,16 @@ const Home = () => {
                 onClick={() => navigate('/addevent')}
                 size="large"
                 color="inherit"
+                sx={{
+                  fontWeight: 'bold', fontWeight: 'bold',
+                  textTransform: 'none',
+                  borderRadius: '50px',
+                  px: 3,
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.05)'
+                  }
+                }}
               >
                 Organize an Event
               </Button>
@@ -167,7 +190,7 @@ const Home = () => {
 
         {/* Features Section */}
         <Container sx={{ py: 8 }}>
-          <Grid container spacing={4} textAlign="center">
+          <Grid container spacing={4} textAlign="center" justifyContent="center">
             <Grid item xs={12} md={4}>
               <Event color="primary" sx={{ fontSize: 50 }} />
               <Typography variant="h6" mt={2}>
@@ -212,15 +235,13 @@ const Home = () => {
               Featured Events
             </Typography>
 
-            <Grid container spacing={4} justifyContent="center">
+            <Grid container spacing={3} justifyContent="center">
               {featuredEvents.length > 0 ? (
                 featuredEvents.map((event) => (
                   <Grid item key={event.id} xs={12} sm={6} md={4}>
                     <Card
                       sx={{
                         height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
                         borderRadius: 3,
                         transition: '0.3s',
                         '&:hover': {
@@ -287,16 +308,7 @@ const Home = () => {
         </Box>
 
         {/* Footer */}
-        <Box sx={{ bgcolor: '#222', color: 'grey.500', py: 6, mt: 8 }}>
-          <Container align="center">
-            <Typography variant="body1">
-              © 2026 CampusEvents Management Portal
-            </Typography>
-            <Typography variant="body2">
-              Designed for students, by students.
-            </Typography>
-          </Container>
-        </Box>
+        <Footer />
       </Box>
 
       {/* Event Details Dialog */}
