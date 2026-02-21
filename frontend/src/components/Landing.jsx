@@ -12,7 +12,7 @@ import {
   Card,
   CardContent,
   IconButton,
-  Link,
+
   useTheme,
   useMediaQuery,
 } from '@mui/material';
@@ -175,7 +175,7 @@ const Landing = () => {
             }}
           >
             Discover & Organize <br />
-            <Box component="span" sx={{ color: '#1976d2' }}>External Events</Box> Effortlessly
+            <Box component="span" sx={{ color: '#1976d2' }}> Events</Box> Effortlessly
           </Typography>
 
           <Typography variant="h6" color="#f8fafc" paragraph sx={{ mb: 6, maxWidth: '700px', mx: 'auto', lineHeight: 1.6 }}>
@@ -243,7 +243,7 @@ const Landing = () => {
             {
               icon: <Event sx={{ fontSize: 40, color: 'white' }} />,
               title: "Discover Events",
-              desc: "Stay updated with the latest workshops, seminars, and fests happening around you.",
+              desc: "Stay updated with the latest workshops, seminars, and fests happening in your campus.",
               color: '#3b82f6'
             },
             {
@@ -255,7 +255,7 @@ const Landing = () => {
             {
               icon: <HistoryEdu sx={{ fontSize: 40, color: 'white' }} />,
               title: "Seamless Management",
-              desc: "Organizers can track registrations, manage attendees, and gather feedback effortlessly.",
+              desc: "Organizers can track registrations and gather feedback effortlessly.",
               color: '#8b5cf6'
             }
           ].map((feature, index) => (
@@ -365,6 +365,9 @@ const Landing = () => {
               >
                 CampusEvents
               </Typography>
+              <Typography variant="body2">
+                Designed for students, by students.
+              </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3, maxWidth: 300 }}>
                 Making campus life more vibrant, connected, and organized for everyone.
               </Typography>
@@ -377,30 +380,19 @@ const Landing = () => {
               </Stack>
             </Grid>
 
-            <Grid item xs={6} md={2}>
+            <Grid item xs={12} md={4}>
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ color: '#0f172a' }}>
-                Platform
+                Contact Us
               </Typography>
-              <Stack spacing={1}>
-                {['Browse Events', 'Organize', 'Communities', 'Success Stories'].map((item) => (
-                  <Link key={item} href="#" underline="none" color="text.secondary" sx={{ fontSize: '0.9rem', transition: 'all 0.2s ease', '&:hover': { color: 'primary.main', transform: 'scale(1.02)' } }}>
-                    {item}
-                  </Link>
-                ))}
-              </Stack>
-            </Grid>
-
-            <Grid item xs={6} md={2}>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ color: '#0f172a' }}>
-                Support
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, maxWidth: 300 }}>
+                Email: campus.events12@gmail.com
               </Typography>
-              <Stack spacing={1}>
-                {['Help Center', 'Safety Center', 'Community Guidelines', 'Contact Us'].map((item) => (
-                  <Link key={item} href="#" underline="none" color="text.secondary" sx={{ fontSize: '0.9rem', transition: 'all 0.2s ease', '&:hover': { color: 'primary.main', transform: 'scale(1.02)' } }}>
-                    {item}
-                  </Link>
-                ))}
-              </Stack>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, maxWidth: 300 }}>
+                Phone: +91 92078 19010
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, maxWidth: 300 }}>
+                Address: ABC Street, Kochi, Kerala, India
+              </Typography>
             </Grid>
           </Grid>
 

@@ -235,75 +235,109 @@ const Home = () => {
               Featured Events
             </Typography>
 
-            <Grid container spacing={3} justifyContent="center">
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, 1fr)',
+                  md: 'repeat(3, 1fr)',
+                },
+                gap: 3,
+              }}
+            >
               {featuredEvents.length > 0 ? (
                 featuredEvents.map((event) => (
-                  <Grid item key={event.id} xs={12} sm={6} md={4}>
-                    <Card
-                      sx={{
-                        height: '100%',
-                        borderRadius: 3,
-                        transition: '0.3s',
-                        '&:hover': {
-                          transform: 'translateY(-5px)',
-                          boxShadow: 6,
-                        },
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => setSelectedEvent(event)}
-                    >
-                      <CardMedia
-                        component="img"
-                        height="180"
-                        image={
-                          event.poster_image
-                            ? (event.poster_image.startsWith('http') ? event.poster_image : `http://127.0.0.1:8000${event.poster_image}`)
-                            : `https://source.unsplash.com/random/400x200?event&sig=${event.id}`
-                        }
-                        alt={event.title}
-                      />
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography
-                          gutterBottom
-                          variant="h6"
-                          sx={{ fontWeight: 'bold', color: 'primary.main' }}
-                        >
-                          {event.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" paragraph>
-                          {event.description.length > 100 ? `${event.description.substring(0, 100)}...` : event.description}
-                        </Typography>
+                  <Card
+                    key={event.id}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      borderRadius: 3,
+                      transition: '0.3s',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: 6,
+                      },
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => setSelectedEvent(event)}
+                  >
+                    <CardMedia
+                      component="img"
+                      height="180"
+                      image={
+                        event.poster_image
+                          ? (event.poster_image.startsWith('http') ? event.poster_image : `http://127.0.0.1:8000${event.poster_image}`)
+                          : `https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=200&q=80`
+                      }
+                      alt={event.title}
+                      sx={{ objectFit: 'cover', width: '100%', flexShrink: 0 }}
+                    />
+                    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                      <Typography
+                        gutterBottom
+                        variant="h6"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: 'primary.main',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          minHeight: '3.2em', // Ensure space for 2 lines
+                        }}
+                      >
+                        {event.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        paragraph
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          minHeight: '3em', // Ensure space for 2 lines
+                          flexGrow: 1,
+                          mb: 0
+                        }}
+                      >
+                        {event.description}
+                      </Typography>
 
-                        <Stack spacing={1} mt={2}>
-                          <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-                            📅 {event.start_date}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-                            📍 {event.venue}
-                          </Typography>
-                          <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-                            📞 Contact: {event.created_by.phone_no || 'N/A'}
-                          </Typography>
-                        </Stack>
+                      <Stack spacing={1} mt={2}>
+                        <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                          📅 {event.start_date}
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                          📍 {event.venue}
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                          📞 Contact: {event.created_by.phone_no || 'N/A'}
+                        </Typography>
+                      </Stack>
 
-                      </CardContent>
-                      <Box sx={{ p: 2, pt: 0 }}>
-                        <Button fullWidth variant="outlined" size="small" onClick={(e) => {
-                          e.stopPropagation(); // fetch details without triggering card click twice if needed
-                          setSelectedEvent(event);
-                        }}>
-                          View Details
-                        </Button>
-                      </Box>
-                    </Card>
-                  </Grid>
+                    </CardContent>
+                    <Box sx={{ p: 2, pt: 0, mt: 'auto' }}>
+                      <Button fullWidth variant="outlined" size="small" onClick={(e) => {
+                        e.stopPropagation(); // fetch details without triggering card click twice if needed
+                        setSelectedEvent(event);
+                      }}>
+                        View Details
+                      </Button>
+                    </Box>
+                  </Card>
                 ))
               ) : (
-                <Typography variant="h6" color="text.secondary" sx={{ width: '100%', textAlign: 'center', py: 4 }}>
+                <Typography variant="h6" color="text.secondary" sx={{ gridColumn: '1 / -1', textAlign: 'center', py: 4 }}>
                   No featured events available at the moment.
                 </Typography>
               )}
-            </Grid>
+            </Box>
           </Container>
         </Box>
 
