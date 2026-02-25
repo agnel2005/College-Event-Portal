@@ -79,6 +79,11 @@ const AdminDashboard = () => {
     password: "",
   });
 
+  // Delete Confirmation State
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [targetUser, setTargetUser] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   // Load current user from localStorage and fetch all users
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -277,26 +282,40 @@ const AdminDashboard = () => {
     }
   };
 
-  // Delete user (prevent deleting ADMIN)
-  const handleDeleteUser = async (id) => {
-    const userToDelete = users.find((user) => user.id === id);
-
-    if (userToDelete.role.toUpperCase() === "ADMIN") {
+  // Trigger delete confirmation
+  const handleDeleteUser = (user) => {
+    if (user.role.toUpperCase() === "ADMIN") {
       toast.error("Admin cannot be deleted!");
       return;
     }
+    setTargetUser(user);
+    setDeleteDialogOpen(true);
+  };
 
+  // Actual deletion after confirmation
+  const handleConfirmDeleteUser = async () => {
+    if (!targetUser) return;
+
+    setIsDeleting(true);
     try {
-      await deleteUser(id, currentUser.id);
+      await deleteUser(targetUser.id, currentUser.id);
 
       // Remove from local state
-      const updatedUsers = users.filter((user) => user.id !== id);
+      const updatedUsers = users.filter((user) => user.id !== targetUser.id);
       setUsers(updatedUsers);
       toast.success("User deleted successfully");
+      handleCancelDelete();
     } catch (err) {
       const errorMsg = err.error || 'Failed to delete user';
       toast.error(errorMsg);
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setTargetUser(null);
   };
 
   // Logout handler
@@ -596,7 +615,7 @@ const AdminDashboard = () => {
                                   <span>
                                     <IconButton
                                       color="error"
-                                      onClick={() => handleDeleteUser(user.id)}
+                                      onClick={() => handleDeleteUser(user)}
                                       disabled={user.role.toUpperCase() === "ADMIN"}
                                       sx={{
                                         bgcolor: 'error.lighter',
@@ -680,6 +699,36 @@ const AdminDashboard = () => {
             sx={{ fontWeight: 'bold' }}
           >
             Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete User Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={handleCancelDelete} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}>
+          <DeleteIcon /> Confirm Deletion
+        </DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to delete user <strong>{targetUser?.name}</strong>?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone. All data associated with this user will be permanently removed.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, bgcolor: '#fff5f5' }}>
+          <Button onClick={handleCancelDelete} color="inherit" disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDeleteUser}
+            variant="contained"
+            color="error"
+            disabled={isDeleting}
+            sx={{ fontWeight: 'bold' }}
+            startIcon={isDeleting ? <CircularProgress size={20} color="inherit" /> : <DeleteIcon />}
+          >
+            {isDeleting ? 'Deleting...' : 'Confirm Delete'}
           </Button>
         </DialogActions>
       </Dialog>

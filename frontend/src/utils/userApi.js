@@ -53,12 +53,15 @@ export const createUser = async (userData, adminId) => {
  */
 export const updateUser = async (userId, updateData, adminId) => {
   try {
+    console.log(`DEBUG: updateUser calling PATCH /admin/users/${userId}/ with data:`, { ...updateData, admin_id: adminId });
     const response = await apiClient.patch(`/admin/users/${userId}/`, {
       ...updateData,
       admin_id: adminId,
     });
+    console.log('DEBUG: updateUser response:', response.data);
     return response.data;
   } catch (error) {
+    console.error('DEBUG: updateUser error:', error.response?.status, error.response?.data || error.message);
     throw error.response?.data || { error: 'Failed to update user' };
   }
 };
@@ -71,11 +74,14 @@ export const updateUser = async (userId, updateData, adminId) => {
  */
 export const deleteUser = async (userId, adminId) => {
   try {
+    console.log(`DEBUG: deleteUser calling DELETE /admin/users/${userId}/ with adminId:`, adminId);
     const response = await apiClient.delete(`/admin/users/${userId}/`, {
       data: { admin_id: adminId },
     });
+    console.log('DEBUG: deleteUser response:', response.data);
     return response.data;
   } catch (error) {
+    console.error('DEBUG: deleteUser error:', error.response?.status, error.response?.data || error.message);
     throw error.response?.data || { error: 'Failed to delete user' };
   }
 };

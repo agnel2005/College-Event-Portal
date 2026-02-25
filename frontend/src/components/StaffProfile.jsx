@@ -222,16 +222,6 @@ const StaffProfile = () => {
                                 <Stack spacing={3}>
                                     <Box>
                                         <Stack direction="row" spacing={1} mb={1}>
-                                            <VpnKey color="primary" />
-                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold' }}>STAFF CODE</Typography>
-                                        </Stack>
-                                        <Typography variant="h6" sx={{ fontWeight: 'bold', pl: 4, color: 'primary.main' }}>
-                                            {user.staff_code || 'N/A'}
-                                        </Typography>
-                                    </Box>
-                                    <Divider />
-                                    <Box>
-                                        <Stack direction="row" spacing={1} mb={1}>
                                             <School color="primary" />
                                             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold' }}>DEPARTMENT</Typography>
                                         </Stack>

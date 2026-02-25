@@ -51,9 +51,6 @@ urlpatterns = [
     path('users/', ListUsersView.as_view()),
     path('users/<int:user_id>/delete/', DeleteUserView.as_view()),
 
-
-
-    path('users/<int:user_id>/delete/', DeleteUserView.as_view()),
     # NEW – CHANGE PASSWORD
     path('change-password/', ChangePasswordView.as_view()),
 

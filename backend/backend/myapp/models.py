@@ -15,9 +15,9 @@ class User(AbstractUser):
     phone_no = models.CharField(max_length=15)
     department = models.CharField(max_length=100)                   
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
-    staff_code = models.CharField(max_length=50, blank=True, null=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
 
-    REQUIRED_FIELDS = ['email', 'phone_no', 'department', 'role','staff_code']
+    REQUIRED_FIELDS = ['email', 'phone_no', 'department', 'role']
     def __str__(self):
         return self.username
 

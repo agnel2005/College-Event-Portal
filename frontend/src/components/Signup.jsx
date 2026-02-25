@@ -46,7 +46,6 @@ const Signup = () => {
     password: "",
     confirm_password: "",
     role: "student",
-    staff_code: "",
   });
 
   const handleChange = (e) => {
@@ -82,10 +81,6 @@ const Signup = () => {
         role: form.role,
       };
 
-      // send staff_code only if role is staff
-      if (form.role === "staff") {
-        payload.staff_code = form.staff_code;
-      }
 
       const response = await axios.post(
         "http://127.0.0.1:8000/api/register/",
@@ -135,7 +130,7 @@ const Signup = () => {
           </Box>
           <Card>
             <CardContent>
-              
+
 
               <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 2 }}>
                 <TextField label="First Name" name="first_name" onChange={handleChange} required />

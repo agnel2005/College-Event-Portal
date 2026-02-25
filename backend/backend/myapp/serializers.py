@@ -10,11 +10,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
-    staff_code = serializers.CharField(
-        write_only=True,
-        required=False,
-        allow_blank=True
-    )
 
     class Meta:
         model = User
@@ -28,7 +23,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             'phone_no',
             'department',
             'role',
-            'staff_code',
         ]
 
     def validate(self, data):
@@ -36,12 +30,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError("Passwords do not match")
 
-        # staff validation
-        if data['role'] == 'staff':
-            if data.get('staff_code') != "STAFF@2026":
-                raise serializers.ValidationError(
-                    "Invalid staff verification code"
-                )
 
         return data
 
@@ -49,13 +37,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data.pop('confirm_password', None)
 
         password = validated_data.pop('password')
-        staff_code = validated_data.pop('staff_code', None)
 
         user = User(**validated_data)
         user.set_password(password)
 
-        if staff_code:
-            user.staff_code = staff_code
         
         user.save()
         return user

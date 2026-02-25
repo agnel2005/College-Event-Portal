@@ -584,22 +584,28 @@ class AdminUserDetailView(APIView):
     permission_classes = [AllowAny]
 
     def patch(self, request, user_id):
+        print(f"DEBUG: AdminUserDetailView.patch called for user_id={user_id}")
         admin_id = request.data.get('admin_id')
+        print(f"DEBUG: admin_id={admin_id}, data={request.data}")
         
         # Verify requester is admin
         if admin_id:
             try:
                 admin = User.objects.get(id=admin_id)
                 if admin.role != 'admin':
+                    print(f"DEBUG: Unauthorized - User {admin_id} is not admin")
                     return Response(
                         {"error": "Only admins can update users"},
                         status=status.HTTP_403_FORBIDDEN
                     )
             except User.DoesNotExist:
+                print(f"DEBUG: Admin not found - No user with id {admin_id}")
                 return Response(
                     {"error": "Admin not found"},
                     status=status.HTTP_404_NOT_FOUND
                 )
+        else:
+            print("DEBUG: admin_id missing in request data")
         
         user = get_object_or_404(User, id=user_id)
         
@@ -632,22 +638,28 @@ class AdminUserDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, user_id):
+        print(f"DEBUG: AdminUserDetailView.delete called for user_id={user_id}")
         admin_id = request.data.get('admin_id')
+        print(f"DEBUG: admin_id={admin_id}, data={request.data}")
         
         # Verify requester is admin
         if admin_id:
             try:
                 admin = User.objects.get(id=admin_id)
                 if admin.role != 'admin':
+                    print(f"DEBUG: Unauthorized - User {admin_id} is not admin")
                     return Response(
                         {"error": "Only admins can delete users"},
                         status=status.HTTP_403_FORBIDDEN
                     )
             except User.DoesNotExist:
+                print(f"DEBUG: Admin not found - No user with id {admin_id}")
                 return Response(
                     {"error": "Admin not found"},
                     status=status.HTTP_404_NOT_FOUND
                 )
+        else:
+            print("DEBUG: admin_id missing in request data")
         
         user = get_object_or_404(User, id=user_id)
         

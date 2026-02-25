@@ -234,7 +234,7 @@ const Landing = () => {
             Why Choose CampusEvents?
           </Typography>
           <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-            Everything you need to manage your campus life, all in one simplified platform.
+            Everything you need to manage your campus events, all in one simplified platform.
           </Typography>
         </Box>
 
@@ -249,7 +249,7 @@ const Landing = () => {
             {
               icon: <Groups sx={{ fontSize: 40, color: 'white' }} />,
               title: "Connect & Collaborate",
-              desc: "Form teams, meet like-minded peers, and grow your professional network on campus.",
+              desc: "Discover opportunities, form teams, and expand your campus network through events and activities.",
               color: '#10b981'
             },
             {
@@ -314,22 +314,35 @@ const Landing = () => {
                 Empowering Student Communities
               </Typography>
               <Typography variant="h6" sx={{ opacity: 0.8, mb: 4, lineHeight: 1.6 }}>
-                We believe that the best learning happens outside the classroom. Our mission is to connect every student with opportunities to learn, lead, and grow.
+                We believe campus life is more than just classes. Our platform helps students organize events, and actively participate in campus activities.
               </Typography>
-              <Stack direction="row" spacing={4}>
-                <Box>
-                  <Typography variant="h3" fontWeight="bold" color="primary.light">50+</Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.7 }}>Active Events</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h3" fontWeight="bold" color="primary.light">2k+</Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.7 }}>Students Registered</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h3" fontWeight="bold" color="primary.light">100%</Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.7 }}>Free to Use</Typography>
-                </Box>
-              </Stack>
+              <Grid container spacing={2} sx={{ mt: 2 }}>
+                {[
+                  { label: "Smart Scheduling", detail: "Automated event timelines", dot: "#3b82f6" },
+                  { label: "Organize Events", detail: "Organize your campus events easily", dot: "#10b981" },
+                  { label: "Direct Approval", detail: "One-click staff verification", dot: "#8b5cf6" },
+                  { label: "Community First", detail: "Designed particularly for students", dot: "#ec4899" }
+                ].map((item, i) => (
+                  <Grid item xs={6} key={i}>
+                    <Box sx={{
+                      p: 2,
+                      borderRadius: 3,
+                      bgcolor: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      transition: '0.3s',
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.08)', borderColor: item.dot }
+                    }}>
+                      <Stack direction="row" spacing={1.5} alignItems="center">
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.dot, boxShadow: `0 0 10px ${item.dot}` }} />
+                        <Box>
+                          <Typography variant="subtitle2" fontWeight="bold" sx={{ color: 'white' }}>{item.label}</Typography>
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block' }}>{item.detail}</Typography>
+                        </Box>
+                      </Stack>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
             </Grid>
             <Grid item xs={12} md={6}>
               <Box

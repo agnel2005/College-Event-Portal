@@ -149,41 +149,75 @@ const StaffDashboard = () => {
       </Box>
 
       {/* DASHBOARD CARDS */}
-      <Container sx={{ mt: 6 }}>
-        <Grid container spacing={4}>
+      <Container sx={{ mt: 6, mb: 8 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+            },
+            gap: 4,
+          }}
+        >
           {cards.map((card) => (
-            <Grid item xs={12} md={4} key={card.title}>
-              <Card
-                sx={{
-                  height: '100%',
-                  transition: '0.3s',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    transform: 'translateY(-6px)',
-                    boxShadow: 6,
-                  },
-                }}
-                onClick={() => navigate(card.path)}
-              >
-                <CardContent sx={{ p: 4 }}>
-                  <Box sx={{ mb: 2 }}>{card.icon}</Box>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {card.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {card.description}
-                  </Typography>
+            <Card
+              key={card.title}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                transition: '0.3s',
+                cursor: 'pointer',
+                borderRadius: 2,
+                '&:hover': {
+                  transform: 'translateY(-6px)',
+                  boxShadow: 6,
+                },
+              }}
+              onClick={() => navigate(card.path)}
+            >
+              <CardContent sx={{ p: 4, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ mb: 2 }}>{card.icon}</Box>
+                <Typography
+                  variant="h6"
+                  fontWeight="bold"
+                  gutterBottom
+                  sx={{
+                    minHeight: '2.4em', // Space for 1-2 lines
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  {card.title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    minHeight: '3em', // Space for 2 lines
+                    flexGrow: 1
+                  }}
+                >
+                  {card.description}
+                </Typography>
+                <Box sx={{ mt: 'auto', pt: 2 }}>
                   <Button
                     variant="contained"
-                    sx={{ mt: 3 }}
+                    fullWidth
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(card.path);
+                    }}
                   >
                     Open
                   </Button>
-                </CardContent>
-              </Card>
-            </Grid>
+                </Box>
+              </CardContent>
+            </Card>
           ))}
-        </Grid>
+        </Box>
       </Container>
     </Box>
   );
