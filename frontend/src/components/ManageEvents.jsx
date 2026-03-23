@@ -1,5 +1,7 @@
 // src/components/ManageEvents.jsx
 
+// event approval, deletion, reset to pending, email notification
+
 import { Tabs, Tab, Snackbar, Alert } from '@mui/material';   // TAB VIEW and toasts
 import React, { useEffect, useState } from 'react';
 import {
