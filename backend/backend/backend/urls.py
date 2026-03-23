@@ -22,7 +22,7 @@ Including another URLconf
 
 
 
-
+#this fil gives url to api
 
 from django.contrib import admin
 from django.urls import path, include
